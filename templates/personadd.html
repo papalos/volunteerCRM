@@ -1,0 +1,16 @@
+{%extends "basic.html"%}
+{%block title%}Легион-Регистрация{%endblock%}
+{%block body%}
+<form action="/personview" method="post">
+    <p>Фамилия: <input type="text" name="surname" /></p>
+    <p>Имя: <input type="text" name="name" /></p>
+    <p>Отчество: <input type="text" name="patronymic" /></p>
+    <p>Дата рождения: <input type="text" name="birthday" /></p>
+    <p>Факультет: <input type="text" name="faculty" /></p>
+    <p>E-mail: <input type="text" name="email" /></p>
+    <p>Телефон: <input type="text" name="phone" /></p>
+    <p>Логин: <input type="text" name="login" /></p>
+    <p>Пароль: <input type="text" name="password" /></p>
+    <p><input type="submit" value="Зарегистрироваться" /></p>
+</form>
+{%endblock%}

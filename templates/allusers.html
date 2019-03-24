@@ -1,0 +1,16 @@
+{%extends "basic.html"%}
+{%block title%}Легион-Пользователи{%endblock%}
+{%block body%}
+<h1>Все пользователи</h1>
+
+<table>
+	<thead>
+	<th>Фамилия</th><th>Имя</th><th>Отчество</th><th>Факультет</th><th>e-mail</th><th>Телефон</th><th>Дата рождения</th><th>Логин</th><th>Пароль</th><th>Дата регистрации</th><th>Посещено</th><th>Не посещено</th><th></th>
+	</thead>
+	{%for pers in persons%}
+	<tr>
+	<td>{{pers[1]}}</td><td>{{pers[2]}}</td><td>{{pers[3]}}</td><td>{{pers[4]}}</td><td>{{pers[5]}}</td><td>{{pers[6]}}</td><td>{{pers[7]}}</td><td>{{pers[8]}}</td><td>{{pers[9]}}</td><td>{{pers[10]}}</td><td>visited</td><td>not_visited</td><td><a href="/deluser?idu={{pers[0]}}">удалить</a></td>
+	</tr>
+	{%endfor%}
+</table>
+{%endblock%}

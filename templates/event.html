@@ -1,0 +1,40 @@
+{%extends "basic.html"%}
+{%block title%}Легион-События{%endblock%}
+{%block body%}
+<h1>Все события</h1>
+
+<div class="table">
+<table>
+	<thead>
+	<th>Событие</th><th>Активность/Предмет</th><th>Дата</th><th>Редактировать</th><th>Статистика</th>
+	</thead>
+	{%for evt in events%}
+	<tr>
+	<td>{{evt[1]}}</td><td>{{evt[2]}}</td><td>{{evt[3]}}</td><td><a href="deletevt/{{evt[0]}}">удалить<a></td><td><a href="/stat/{{evt[0]}}">статистика регистраций<a></td>
+	</tr>
+	{%endfor%}
+</table>
+</div>
+
+<div class="addform">
+<form action="/eventadd" method="post">
+<table>
+	<thead>
+	<th>Событие</th><th>Активность/Предмет</th><th>Дата</th>
+	</thead>
+	<tr>
+		<td>
+			<input type="text" name="event" />
+		</td>
+		<td>
+			<input type="text" name="activity" />
+		</td>
+		<td>
+			<input type="text" name="date" />
+		</td>
+	</tr>
+</table>
+<input type="submit" value="Создать событие" />
+</form>
+</div>
+{%endblock%}

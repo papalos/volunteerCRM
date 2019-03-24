@@ -1,0 +1,21 @@
+{%extends "basic.html"%}
+{%block title%}Легион-Статистика регистраций{%endblock%}
+{%block body%}
+<h1>Статистика регистраций на {{event[1]}} - {{event[2]}}</h1>
+
+<span>Количество зарегистрировавшихся на событие: {{count}}</span>
+<form action="/check" method="post">
+<input type="hidden" name="event" value="{{event[0]}}">
+<table>
+	<thead>
+        <th>id</th><th>Фамилия</th><th>Имя</th><th>Отчество</th><th>Факультет</th><th>e-mail</th><th>Телефон</th><th>Дата рождения</th><th>Присутствие</th>
+	</thead>
+	{%for r in registration%}
+	<tr>
+	    <td>{{r[0]}}</td><td>{{r[1]}}</td><td>{{r[2]}}</td><td>{{r[3]}}</td><td>{{r[4]}}</td><td>{{r[5]}}</td><td>{{r[6]}}</td><td>{{r[7]}}</td><td><input type="checkbox" name="{{r[0]}}"/></td>
+	</tr>
+	{%endfor%}
+</table>
+<input type="submit" value="Отметить" />
+</form>
+{%endblock%}

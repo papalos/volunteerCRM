@@ -1,0 +1,16 @@
+altgraph==0.16.1
+Click==7.0
+Flask==1.0.2
+future==0.17.1
+itsdangerous==1.1.0
+Jinja2==2.10
+lxml==4.3.1
+macholib==1.11
+MarkupSafe==1.1.1
+pefile==2018.8.8
+PyInstaller==3.4
+pypiwin32==223
+python-docx==0.8.10
+pywin32==224
+pywin32-ctypes==0.2.0
+Werkzeug==0.14.1
