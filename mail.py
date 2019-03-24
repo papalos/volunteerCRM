@@ -5,6 +5,7 @@ from email.header    import Header
 import json
 
 def to_volunteer(destination, link):
+    """to_volunteer(destination, link)"""
     # читаем файл конфиг, берем из него логин и пароль для smtp
     fp = open('conn.fig')
     s=fp.read()
