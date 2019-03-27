@@ -24,7 +24,7 @@ def admn():
     return render_template('admn.html')
 
 
-# III Панель администратора - все пользователи
+# Панель администратора (пользователь) - все пользователи (выводит всех пользователей из постоянной таблицы person
 @app.route('/allusers')
 def allusers():
     conn = sqlite3.connect("sql/volonteer.db")
@@ -34,7 +34,7 @@ def allusers():
     conn.close()
     return render_template('allusers.html', persons=persons)
 
-# III Панель администратора - удаляет пользователя из таблицы всех пользователей
+# Панель администратора (пользователь) - удаляет пользователя из постоянной таблицы person
 @app.route('/deluser')
 def deluser():
     conn = sqlite3.connect("sql/volonteer.db")
@@ -46,7 +46,7 @@ def deluser():
     return redirect(url_for('allusers'))
 
 
-# III Панель администратора - события
+# Панель администратора (события) - выводит список всех событий
 @app.route('/event')
 def event():
     conn = sqlite3.connect("sql/volonteer.db")
@@ -57,7 +57,7 @@ def event():
     return render_template('event.html', events=events)
 
 
-# Панель администратора - добавление нового события
+# Панель администратора (события) - выполняет добавление нового события и редирект к списку всех событий
 @app.route('/eventadd', methods=['GET', 'POST'])
 def eventadd():
     event=request.form['event']
@@ -66,20 +66,47 @@ def eventadd():
 
     # Соединение с БД
     conn = sqlite3.connect("sql/volonteer.db")
-    cur = conn.cursor()
-    
+    cur = conn.cursor()    
+    # Вставка записи в таблицу событий
     cur.execute("INSERT INTO event (event, activity, date) VALUES ('" +event+ "', '" +activity+ "', '" +date+ "')")
-
-    # Сохраняем изменения
-    conn.commit()
-    
-    # We can also close the connection if we are done with it.
+    # Фиксируем изменения в базе
+    conn.commit()    
+    # Закрываем соединение
     conn.close()
     
     return redirect(url_for('event'))
 
+# Панель администратора (события) - удаление события и редирект к списку событий
+@app.route('/deletevt/<id>')
+def deletevt(id):
 
-# Панель администратора - отметить волонтера на событии
+    # Соединение с БД
+    conn = sqlite3.connect("sql/volonteer.db")
+    cur = conn.cursor()    
+    cur.execute("DELETE FROM event WHERE id_evt = " + id)
+    conn.commit()
+    conn.close()
+    
+    return redirect(url_for('event'))
+
+# Панель администратора (события) - статистика регистраций на событие, списки волонтеров зарегистрировавшихся на конкретное событие
+@app.route('/stat/<id_evt>')
+def stat(id_evt):
+    conn = sqlite3.connect("sql/volonteer.db")
+    curI = conn.cursor()
+    curII = conn.cursor()
+    # Выборка волонтеров зарегистрированных на конкретное событие
+    curI.execute("SELECT p.id_prsn, surname_prsn, name_prsn, patronymic_prsn, faculty, email, phone, birthday FROM registration AS r JOIN person AS p ON r.id_prsn=p.id_prsn WHERE r.id_evt = {}".format(id_evt))
+    # Данные о событии по его id
+    curII.execute("SELECT * FROM event WHERE id_evt = {}".format(id_evt))
+    registration = curI.fetchall()
+    count = len(registration)
+    event = curII.fetchone()
+    # дописать тело. Показывает сколько человек зарегистрировалось на событие и вы водит поименный список с возможностью отмечать присутствие
+    return render_template('stat.html', registration=registration, event=event, count=count)
+
+
+# Панель администратора (события) - отметить волонтера на событии
 @app.route('/check', methods=['GET', 'POST'])
 def check():
     # Соединение с БД
@@ -90,51 +117,17 @@ def check():
     _form=request.form
     for key in _form:
         if _form[key] == 'on':
-            # Меняем нолик на единицу в таблице регистраций, делая посещения волонтером с id = key мероприятия с id = event
+            # Меняем нолик на единицу в таблице регистраций, устанавливая посещение волонтером с id = key мероприятия с id = event
             cur.execute("UPDATE registration SET visit = 1 WHERE id_prsn = {0} AND id_evt={1}".format(key, event))
-        # Сохраняем изменения
         conn.commit()
 
     conn.close()    
     return redirect(url_for('event'))
 
-
-# Панель администратора - удаление события
-@app.route('/deletevt/<id>')
-def deletevt(id):
-
-    # Соединение с БД
-    conn = sqlite3.connect("sql/volonteer.db")
-    cur = conn.cursor()
-    
-    cur.execute("DELETE FROM event WHERE id_evt = " + id)
-
-    conn.commit()
-    conn.close()
-    
-    return redirect(url_for('event'))
-
-
-# Панель администратора - статистика регистраций на событие
-@app.route('/stat/<id_evt>')
-def stat(id_evt):
-    conn = sqlite3.connect("sql/volonteer.db")
-    curI = conn.cursor()
-    curII = conn.cursor()
-    curI.execute("SELECT p.id_prsn, surname_prsn, name_prsn, patronymic_prsn, faculty, email, phone, birthday FROM registration AS r JOIN person AS p ON r.id_prsn=p.id_prsn WHERE r.id_evt = {}".format(id_evt))
-    curII.execute("SELECT * FROM event WHERE id_evt = {}".format(id_evt))
-    registration = curI.fetchall()
-    count = len(registration)
-    event = curII.fetchone()
-    # дописать тело. Показывает сколько человек зарегистрировалось на событие и вы водит поименный список с возможностью отмечать присутствие
-    return render_template('stat.html', registration=registration, event=event, count=count)
-
-
-# Регистрация личного кабинета
+# III Регистрация личного кабинета - регистрационная форма
 @app.route('/person')
 def person():
     return render_template('personadd.html')
-
 
 # Регистрация личного кабинета - добавление нового пользователя во временную таблицу и отправка подтверждающего сообщения
 @app.route('/personview', methods=['GET', 'POST'])
@@ -148,7 +141,9 @@ def personview():
     phone=request.form['phone']
     login=request.form['login']
     password=request.form['password']
+    # получение текущей даты в iso формате
     today = date.today()
+    # преобразование даты в строку
     date_reg = str(today)
 
     # Соединение с БД
@@ -158,6 +153,7 @@ def personview():
     # Удаление старых записей во временной таблице по проществии 30 дней с момента регистрации
     cur.execute("SELECT hash, date_reg FROM temp_user")
     for row in cur.fetchall():
+        # преобразуем строку из базы в дату и вычитаем ее из текущей, если дельта больше 30 дней, удаляем строку
         if (date.today()-date.fromisoformat(row[1]))>timedelta(30): cur.execute("DELETE FROM temp_user WHERE hash='{}'".format(row[0]))
     # Сохраняем изменения
     conn.commit()
@@ -166,11 +162,11 @@ def personview():
     rand = str(random.randint(3245, 6000000))
     # убедимся, что такое число отсутствует во временной таблицы, для его уникальности.
     cur.execute('SELECT hash FROM temp_user')
-    sec =[x[0] for x in cur.fetchall()]       # Генерируем из список из первых элементов запрошенных строк
+    sec =[x[0] for x in cur.fetchall()]       # Генерируем список из первых элементов запрошенных строк
     while rand in sec:                        # Если сгенерированое число уже есть в таблице, генерируем новое
         rand = str(random.randint(3245, 6000000))
 
-    # Запись переданных в форме данных во временную таблицу
+    # Запись переданных в форме данных во временную таблицу индексируя строку случайным числом, на него же будем ссылаться из письма с подтверждением регистрации
     cur.execute("INSERT INTO temp_user (hash, surname, name, patronymic, email, faculty, phone, birthday, login, password, date_reg) VALUES ('" +rand+ "', '" +surname+ "', '" +name+ "', '" +patronymic+ "', '" +email+ "', '" +faculty+ "', '" +phone+ "', '" +birthday+ "', '"  +login+ "', '" +password+ "', '" +date_reg+ "')")
 
     # Сохраняем изменения
@@ -179,26 +175,42 @@ def personview():
     conn.close()
 
     #* Отправка почтового сообщения с подтверждением регистрации пользователю
-    #* ссылка с хешем, для перезаписи из временной таблицы в таблицу пользователей
+    #* ссылка со сгенерированным числом, для перезаписи из временной таблицы в таблицу пользователей
     host = request.host_url.split(':')                       # парсим адрес хоста
-    link=host[0]+':'+host[1]+url_for('confirm',hash=rand)    # собираем ссылку из хоста, страницы проверки и хеша пользователя
+    link=host[0]+':'+host[1]+url_for('confirm',hash=rand)    # собираем ссылку из хоста, страницы проверки и случайного числа сгенерированного для пользователя
     mail.to_volunteer(email, link)                           # функция отправки сообщения из файла mail.py
     return '<span>На ваш почтовый адрес отправлена ссылка для подтверждения регистрации</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
 
-# Регистрация личного кабинета - подтверждение регистрации с почты
+# Регистрация личного кабинета - подтверждение регистрации по ссылке с почты
 @app.route('/confirm/<hash>')
-def confirm():
-    pass
+def confirm(hash):
+     # Соединение с БД
+    conn = sqlite3.connect("sql/volonteer.db")
+    cur = conn.cursor()
+    # Нахождение записи во временной таблице temp_user по коду в ссылке подтверждения
+    cur.execute('SELECT * FROM temp_user WHERE hash="{}"'.format(hash))
+    row = cur.fetchone()
+    if row==None: return '<span>Ваша ссылка подтверждения не действительна!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
+    # (Захешировать пароль перед перезаписью - не реализовано)
+    # Перезапись значений в постоянную таблицу person
+    cur.execute('INSERT INTO person (surname_prsn, name_prsn, patronymic_prsn, faculty, email, phone, birthday, login, password, date_reg) VALUES ("{0}", "{1}", "{2}", "{3}", "{4}", "{5}", "{6}", "{7}", "{8}", "{9}")'.format(row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10]))
+    conn.commit()
+    # Удаление записи во временной таблице temp_user по коду в ссылке
+    cur.execute('DELETE FROM temp_user WHERE hash="{}"'.format(hash))
+    conn.commit()
+    conn.close()
+
     # отправить логин и пароль на почтовый адрес
+    mail.send_passw(row[5], row[8], row[9])    
     return redirect(url_for('index'))
 
-# Авторизация - Вход в личный кабинет волонтера
+# IV Авторизация - Вход в личный кабинет волонтера - Форма авторизации
 @app.route('/login')
 def login():
     return render_template('login.html')
 
 
-# Личный кабинет волонтера - Вход
+# Личный кабинет волонтера - Вход - обработка формы
 @app.route('/cabinetin', methods=['GET','POST'])
 def cabinetin():
     # Получаем из формы логин и пароль
