@@ -33,7 +33,7 @@ def send_passw(destination:'dest_adr', log:'login', pwd:'password')->None:
     password = dic.get('password')
     fp.close()
 
-    msg = MIMEText('Ваша регистрация подтверждена! Логин: {};  Пароль: {}'.format(log, pwd))
+    msg = MIMEText('Ваша регистрация подтверждена!\n Логин: {}\n Пароль: {}'.format(log, pwd))
     msg['Subject'] = Header('Подтверждение регистрации волонтера', 'utf-8')
     msg['From'] = login
     msg['To'] = destination
@@ -45,3 +45,4 @@ def send_passw(destination:'dest_adr', log:'login', pwd:'password')->None:
 
 if __name__ == '__main__':
     to_volunteer('patro1@yandex.ru', 'какая-нибудь сгенерированя херобуда')
+    send_passw('patro1@yandex.ru', 'ух ты', 'мы вышли из бухты')

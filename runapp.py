@@ -3,7 +3,9 @@ import sqlite3                                                                  
 from datetime import date, timedelta                                              # класс для работы с датой
 import random                                                                     # для генерации случайных чисел
 import mail                                                                       # отправка сообщения для подтверждения регистрации
- 
+import checker                                                                    # проверки
+from admin.admin import panel
+
 
 app = Flask(__name__)
 # Ключ шифорования для работы с сессиями
@@ -21,12 +23,19 @@ def index():
 # Управление пользователями
 @app.route('/admn')
 def admn():
+    # является ли пользователь администратором
+    if session.get('id') != 'admin':
+        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
     return render_template('admn.html')
 
 
 # Панель администратора (пользователь) - все пользователи (выводит всех пользователей из постоянной таблицы person
 @app.route('/allusers')
 def allusers():
+    # является ли пользователь администратором
+    if session.get('id') != 'admin':
+        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
+    
     conn = sqlite3.connect("sql/volonteer.db")
     cur = conn.cursor()
     cur.execute('SELECT * FROM person')
@@ -37,6 +46,10 @@ def allusers():
 # Панель администратора (пользователь) - удаляет пользователя из постоянной таблицы person
 @app.route('/deluser')
 def deluser():
+    # является ли пользователь администратором
+    if session.get('id') != 'admin':
+        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
+    
     conn = sqlite3.connect("sql/volonteer.db")
     cur = conn.cursor()
     del_num = request.args.get('idu')
@@ -49,6 +62,10 @@ def deluser():
 # Панель администратора (события) - выводит список всех событий
 @app.route('/event')
 def event():
+    # является ли пользователь администратором
+    if session.get('id') != 'admin':
+        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
+    
     conn = sqlite3.connect("sql/volonteer.db")
     cur = conn.cursor()
     cur.execute('SELECT * FROM event')
@@ -60,6 +77,10 @@ def event():
 # Панель администратора (события) - выполняет добавление нового события и редирект к списку всех событий
 @app.route('/eventadd', methods=['GET', 'POST'])
 def eventadd():
+    # является ли пользователь администратором
+    if session.get('id') != 'admin':
+        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
+    
     event=request.form['event']
     activity=request.form['activity']
     date=request.form['date']
@@ -79,7 +100,10 @@ def eventadd():
 # Панель администратора (события) - удаление события и редирект к списку событий
 @app.route('/deletevt/<id>')
 def deletevt(id):
-
+    # является ли пользователь администратором
+    if session.get('id') != 'admin':
+        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
+    
     # Соединение с БД
     conn = sqlite3.connect("sql/volonteer.db")
     cur = conn.cursor()    
@@ -92,6 +116,10 @@ def deletevt(id):
 # Панель администратора (события) - статистика регистраций на событие, списки волонтеров зарегистрировавшихся на конкретное событие
 @app.route('/stat/<id_evt>')
 def stat(id_evt):
+    # является ли пользователь администратором
+    if session.get('id') != 'admin':
+        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
+    
     conn = sqlite3.connect("sql/volonteer.db")
     curI = conn.cursor()
     curII = conn.cursor()
@@ -109,6 +137,11 @@ def stat(id_evt):
 # Панель администратора (события) - отметить волонтера на событии
 @app.route('/check', methods=['GET', 'POST'])
 def check():
+    # является ли пользователь администратором
+    if session.get('id') != 'admin':
+        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
+    
+
     # Соединение с БД
     conn = sqlite3.connect("sql/volonteer.db")
     cur = conn.cursor()
@@ -191,7 +224,7 @@ def confirm(hash):
     cur.execute('SELECT * FROM temp_user WHERE hash="{}"'.format(hash))
     row = cur.fetchone()
     if row==None: return '<span>Ваша ссылка подтверждения не действительна!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
-    # (Захешировать пароль перед перезаписью - не реализовано)
+    # (Захешировать пароль перед перезаписью - не реализовано!)
     # Перезапись значений в постоянную таблицу person
     cur.execute('INSERT INTO person (surname_prsn, name_prsn, patronymic_prsn, faculty, email, phone, birthday, login, password, date_reg) VALUES ("{0}", "{1}", "{2}", "{3}", "{4}", "{5}", "{6}", "{7}", "{8}", "{9}")'.format(row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10]))
     conn.commit()
@@ -216,9 +249,18 @@ def cabinetin():
     # Получаем из формы логин и пароль
     login = request.form['login']
     password = request.form['password']
+
+    # Если вход выполнил администратор (тест)    
+    if checker.pswAdm(login,password):
+        # Сохраняем id администратора в сессии
+        session['id']='admin'
+        # Переходим на страницу отображения ЛК
+        return redirect(url_for('admn'))
+
     # Подключаемся к БД
     conn = sqlite3.connect("sql/volonteer.db")
     cur = conn.cursor()
+
     # Делаем выборку всех записей из таблицы Пользователей
     cur.execute('SELECT * FROM person')
     persons = cur.fetchall()
@@ -276,7 +318,7 @@ def cabinet(action):
             ls = int(''.join(ls))
             # получаем и преобразуем в число текущую дату и сравниваем его с датой события
             if (ls>int(''.join(date.today().isoformat().split('-')))):
-                delreg = '<a href="/delreg/{}">Отменить регистрацию</a>'.format(row[0])
+                delreg = '<a href="/unregistration/{}">Отменить регистрацию</a>'.format(row[0])
                 # формируем строки таблицы только из тех событий даты которых больше текущей даты.
                 content += '<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td></tr>'.format( row[1],row[2],row[3],delreg)
         content += '</table>'
@@ -313,7 +355,23 @@ def registration(id_evt):
     
     return redirect(url_for('cabinet', action='nextevt'))
 
+# Личный кабинет - Отмена регистрации пользователя на событие
+@app.route('/unregistration/<id_evt>', methods=['GET', 'POST'])
+def unregistration(id_evt):
+    # Соединение с БД
+    conn = sqlite3.connect("sql/volonteer.db")
+    cur = conn.cursor()
+    # Удаление записи в таблицу регистраций
+    cur.execute("DELETE FROM registration WHERE id_prsn={} AND id_evt = {}".format(str(session['id']), id_evt))
+    # Сохраняем изменения
+    conn.commit()
+    conn.close()
+    
+    return redirect(url_for('cabinet', action='regevt'))
+
 # int(''.join(date.today().isoformat().split('-'))) # - получение числа из текущей даты, необходим следующий импорт: from datetime import date
 # ----------------------- Конец скрипта ------------------------ #
 if (__name__ == '__main__'):
-    app.run(debug=True)
+    app.register_blueprint(panel, url_prefix='/admin')
+    app.run(debug=False)
+    
