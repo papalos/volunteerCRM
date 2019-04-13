@@ -21,12 +21,7 @@ def index():
 
 # II Панель администратора
 # Управление пользователями
-@app.route('/admn')
-def admn():
-    # является ли пользователь администратором
-    if session.get('id') != 'admin':
-        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
-    return render_template('admn.html')
+# @app.route('/admn') # def admn(): # - Перенесена в blueprint admin
 
 
 # Панель администратора (пользователь) - все пользователи (выводит всех пользователей из постоянной таблицы person
@@ -255,7 +250,7 @@ def cabinetin():
         # Сохраняем id администратора в сессии
         session['id']='admin'
         # Переходим на страницу отображения ЛК
-        return redirect(url_for('admn'))
+        return redirect(url_for('administrator.index_adm'))
 
     # Подключаемся к БД
     conn = sqlite3.connect("sql/volonteer.db")
