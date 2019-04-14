@@ -25,18 +25,7 @@ def index():
 
 
 # Панель администратора (пользователь) - все пользователи (выводит всех пользователей из постоянной таблицы person
-@app.route('/allusers')
-def allusers():
-    # является ли пользователь администратором
-    if session.get('id') != 'admin':
-        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
-    
-    conn = sqlite3.connect("sql/volonteer.db")
-    cur = conn.cursor()
-    cur.execute('SELECT * FROM person')
-    persons = cur.fetchall()
-    conn.close()
-    return render_template('allusers.html', persons=persons)
+# @app.route('/allusers') # def allusers(): # - Перенесена в blueprint admin
 
 # Панель администратора (пользователь) - удаляет пользователя из постоянной таблицы person
 @app.route('/deluser')
