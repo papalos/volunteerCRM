@@ -6,7 +6,12 @@
     <p>Имя: <input type="text" name="name" /></p>
     <p>Отчество: <input type="text" name="patronymic" /></p>
     <p>Дата рождения: <input type="text" name="birthday" /></p>
-    <p>Факультет: <input type="text" name="faculty" /></p>
+    <p>Факультет: 
+        <select name="faculty">
+            {% for i in facultes %}
+                <option>{{i[2]}}</option>
+            {% endfor%}
+        </select></p>
     <p>E-mail: <input type="text" name="email" /></p>
     <p>Телефон: <input type="text" name="phone" /></p>
     <p>Логин: <input type="text" name="login" /></p>

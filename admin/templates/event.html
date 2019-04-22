@@ -10,14 +10,14 @@
 	</thead>
 	{%for evt in events%}
 	<tr>
-	<td>{{evt[1]}}</td><td>{{evt[2]}}</td><td>{{evt[3]}}</td><td><a href="deletevt/{{evt[0]}}">удалить<a></td><td><a href="/stat/{{evt[0]}}">статистика регистраций<a></td>
+	<td>{{evt[1]}}</td><td>{{evt[2]}}</td><td>{{evt[3]}}</td><td><a href="/admin/deletevt/{{evt[0]}}">удалить<a></td><td><a href="/admin/stat/{{evt[0]}}">статистика регистраций<a></td>
 	</tr>
 	{%endfor%}
 </table>
 </div>
 
 <div class="addform">
-<form action="/eventadd" method="post">
+<form action="/admin/eventadd" method="post">
 <table>
 	<thead>
 	<th>Событие</th><th>Активность/Предмет</th><th>Дата</th>
