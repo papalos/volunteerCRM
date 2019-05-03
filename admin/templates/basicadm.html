@@ -1,0 +1,13 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>{%block title%}{%endblock%}</title>
+</head>
+<body>
+    <div class="menu"><a href = "{{url_for('index')}}">Главная страница</a></div>
+    <div class="menu"><a href = "{{url_for('administrator.index_adm')}}">Панель администратора</a></div>
+{%block body%}{%endblock%}
+<footer></footer>
+</body>
+</html>

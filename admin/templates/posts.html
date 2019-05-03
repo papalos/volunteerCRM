@@ -1,0 +1,11 @@
+{%extends "basicadm.html"%}
+{%block title%}Легион-Администратор{%endblock%}
+{%block body%}
+<h1>Опубликовать новость</h1>
+<form action="{{url_for('administrator.addpost')}}" method="post">
+    <p><input type="text" name="titlepost" /></p>
+    <p><textarea name="bodypost"></textarea></p>
+    <p><input type="submit" value="Опубликовать" /></p>
+</form>
+<footer></footer>
+{%endblock%}

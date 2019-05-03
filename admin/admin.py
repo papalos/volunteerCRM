@@ -143,3 +143,18 @@ def check():
 
     conn.close()    
     return redirect(url_for('administrator.event'))
+
+# Форма для новости
+@panel.route('/post')
+def post():
+    return render_template('posts.html')
+
+# Публикация новости
+@panel.route('/addpost', methods=['GET','POST'])
+def addpost():
+    conn=sqlite3.connect("sql/volonteer.db")
+    cur=conn.cursor()
+    cur.execute('INSERT INTO news (date, title, body) VALUES ("{}","{}","{}")'.format(date.today(), request.form['titlepost'], request.form['bodypost']))
+    conn.commit()
+    conn.close()
+    return redirect(url_for('administrator.index_adm'))

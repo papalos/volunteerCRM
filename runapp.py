@@ -17,7 +17,11 @@ app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
 # Новости. Вход в личные кабинеты участников и админа. Переход к регистрации
 @app.route('/')
 def index():
-    return render_template('index.html')
+    conn = sqlite3.connect('sql/volonteer.db')
+    cur=conn.cursor()
+    cur.execute('SELECT * FROM news ORDER BY id DESC')
+    news = cur.fetchall()
+    return render_template('index.html', news=news)
 
 # II Панель администратора
 # Управление пользователями
@@ -48,30 +52,8 @@ def index():
 
 
 # Панель администратора (события) - отметить волонтера на событии
-"""
-@app.route('/check', methods=['GET', 'POST'])
-def check():
-    # является ли пользователь администратором
-    if session.get('id') != 'admin':
-        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
+# @app.route('/check', methods=['GET', 'POST']) # def check():
     
-
-    # Соединение с БД
-    conn = sqlite3.connect("sql/volonteer.db")
-    cur = conn.cursor()
-
-    event=request.form['event']
-    _form=request.form
-    for key in _form:
-        if _form[key] == 'on':
-            # Меняем нолик на единицу в таблице регистраций, устанавливая посещение волонтером с id = key мероприятия с id = event
-            cur.execute("UPDATE registration SET visit = 1 WHERE id_prsn = {0} AND id_evt={1}".format(key, event))
-        conn.commit()
-
-    conn.close()    
-    return redirect(url_for('event'))
-"""
-
 
 # III Регистрация личного кабинета - регистрационная форма
 @app.route('/person')
