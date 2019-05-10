@@ -1,13 +1,21 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>{%block title%}{%endblock%}</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <title>{%block title%}{%endblock%}</title>
 </head>
 <body>
-    <div class="menu"><a href = "{{url_for('index')}}">Главная страница</a></div>
-    <div class="menu"><a href = "{{url_for('administrator.index_adm')}}">Панель администратора</a></div>
-{%block body%}{%endblock%}
-<footer></footer>
+    <div class="container">
+        <div class="row">
+            <div class="menu col-9"><a  class="p-1" href="{{url_for('index')}}">Главная страница</a> | <a class="p-1" href="{{url_for('administrator.index_adm')}}">Панель администратора</a></div>
+            <div class="col-2 p-1 text-right"><a href="/unlogin">Выход</a></div>
+        </div>
+    </div>
+
+            {%block body%}{%endblock%}
+            <footer></footer>
 </body>
 </html>

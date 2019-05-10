@@ -1,12 +1,14 @@
 {%extends "basicadm.html"%}
 {%block title%}Легион-Статистика регистраций{%endblock%}
 {%block body%}
-<h1>Статистика регистраций на {{event[1]}} - {{event[2]}}</h1>
+<div class="m-3 p-3 border rounded-lg">
+    
+<h2 class="m-2">Статистика регистраций на {{event[1]}} - {{event[2]}}</h2>
 
-<span>Количество зарегистрировавшихся на событие: {{count}}</span>
+<span class="text-danger">Количество зарегистрировавшихся на событие: {{count}}</span>
 <form action="/admin/check" method="post">
 <input type="hidden" name="event" value="{{event[0]}}">
-<table>
+<table class="table table-striped m-auto">
 	<thead>
         <th>id</th><th>Фамилия</th><th>Имя</th><th>Отчество</th><th>Факультет</th><th>e-mail</th><th>Телефон</th><th>Дата рождения</th><th>Присутствие</th>
 	</thead>
@@ -16,6 +18,8 @@
 	</tr>
 	{%endfor%}
 </table>
-<input type="submit" value="Отметить" />
+<div class="text-right"><input type="submit" value="Отметить" /></div>
 </form>
+
+</div>
 {%endblock%}

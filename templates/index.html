@@ -1,15 +1,18 @@
 {%extends "basic.html"%}
 {%block title%}Легион-Главная{%endblock%}
 {%block body%}
-<h1>Главная страница</h1>
-<div><a href="/person">Регистрация нового волонтера</a></div>
-<div><a href="/login">Вход в личный волонтера</a></div>
-<h2>Новости</h2>
+
+
+<div class="container">
+<h2 class="m-2">Новости</h2>
 <div class="news">
     {% for n in news %}
-        <div class="titlenews">{{n[2]}}</div>
-        <div class="datenews">{{n[1]}}</div>
+    <div class="border rounded-right m-2 p-2">
+        <h3 class="titlenews">{{n[2]}}</h3>
+        <div class="datenews small">{{n[1]}}</div>
         <div class="bodynews">{{n[3]}}</div>
+    </div>
     {% endfor %}
+</div>
 </div>
 {%endblock%}

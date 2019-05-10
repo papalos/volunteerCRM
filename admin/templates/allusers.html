@@ -1,11 +1,12 @@
 {%extends "basicadm.html"%}
 {%block title%}Легион-Пользователи{%endblock%}
 {%block body%}
-<h1>Все пользователи</h1>
+<div class="m-3 p-3 border rounded-lg">
+    <h2 class="m-2">Все пользователи</h2>
 
-<table>
+<table class="table table-striped m-auto">
 	<thead>
-	<th>Фамилия</th><th>Имя</th><th>Отчество</th><th>Факультет</th><th>e-mail</th><th>Телефон</th><th>Дата рождения</th><th>Логин</th><th>Пароль</th><th>Дата регистрации</th><th>Посещено</th><th>Не посещено</th><th></th>
+        <th>Фамилия</th><th>Имя</th><th>Отчество</th><th>Факультет</th><th>e-mail</th><th>Телефон</th><th>Дата рождения</th><th>Логин</th><th>Пароль</th><th>Дата регистрации</th><th>Посещено</th><th>Не посещено</th><th></th>
 	</thead>
 	{%for pers in persons%}
 	<tr>
@@ -13,4 +14,5 @@
 	</tr>
 	{%endfor%}
 </table>
+</div>
 {%endblock%}

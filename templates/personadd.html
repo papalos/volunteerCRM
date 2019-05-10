@@ -1,21 +1,27 @@
 {%extends "basic.html"%}
 {%block title%}Легион-Регистрация{%endblock%}
 {%block body%}
+<div class="container w-50 p-3 border rounded-lg">
+    <h3 class="mb-4">Регистрация нового волонтера</h3>
 <form action="/personview" method="post">
-    <p>Фамилия: <input type="text" name="surname" /></p>
-    <p>Имя: <input type="text" name="name" /></p>
-    <p>Отчество: <input type="text" name="patronymic" /></p>
-    <p>Дата рождения: <input type="text" name="birthday" /></p>
-    <p>Факультет: 
-        <select name="faculty">
+    <p class="row"><label class="col-4">Фамилия: </label><input class="col-7" type="text" name="surname" /></p>
+    <p class="row"><label class="col-4">Имя: </label><input class="col-7" type="text" name="name" /></p>
+    <p class="row"><label class="col-4">Отчество: </label><input class="col-7" type="text" name="patronymic" /></p>
+    <p class="row"><label class="col-4">Дата рождения: </label><input class="col-7" type="text" name="birthday" /></p>
+    <p class="row">
+        <label class="col-4">Факультет: </label>
+        <select class="col-7" name="faculty">
             {% for i in facultes %}
-                <option>{{i[2]}}</option>
+            <option>{{i[2]}}</option>
             {% endfor%}
-        </select></p>
-    <p>E-mail: <input type="text" name="email" /></p>
-    <p>Телефон: <input type="text" name="phone" /></p>
-    <p>Логин: <input type="text" name="login" /></p>
-    <p>Пароль: <input type="text" name="password" /></p>
-    <p><input type="submit" value="Зарегистрироваться" /></p>
+        </select>
+    </p>
+    <p class="row"><label class="col-4">E-mail: </label><input class="col-7" type="text" name="email" /></p>
+    <p class="row"><label class="col-4">Телефон: </label><input class="col-7" type="text" name="phone" /></p>
+    <p class="row"><label class="col-4">Логин: </label><input class="col-7" type="text" name="login" /></p>
+    <p class="row"><label class="col-4">Пароль: </label><input class="col-7" type="text" name="password" /></p>
+    <p class="text-right m-0" ><input class="mr-4" type="submit" value="Зарегистрироваться" /></p>
 </form>
+</div>
+<br /><br />
 {%endblock%}

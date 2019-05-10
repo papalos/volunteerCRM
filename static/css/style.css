@@ -1,0 +1,35 @@
+@font-face {
+    font-family: Beckett;
+    src: url(/static/font/beckett.ttf);    
+}
+
+.top{
+    background:#aba9a9;
+    color:#000000;
+    width:80%;
+}
+
+.enter{
+    background: #f8f30d;
+    color: #00ff21;
+    width:20%;
+    float:right;
+}
+
+.name {
+    font-size:16pt;
+}
+
+.exter{
+    position:relative;
+    margin-bottom: 10px;
+}
+
+.logo {
+    font-family: Beckett;
+    font-size: 500%;
+    z-index: 1;
+    position: absolute;
+    top: 5px;
+}
+   

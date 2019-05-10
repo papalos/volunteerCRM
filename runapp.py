@@ -143,7 +143,19 @@ def confirm(hash):
 # IV Авторизация - Вход в личный кабинет волонтера - Форма авторизации
 @app.route('/login')
 def login():
+    if (session.get('id')):
+        if session.get('id')=='admin':
+            return redirect(url_for('administrator.index_adm'))
+        else:
+            return redirect(url_for('cabinet',action='1'))
     return render_template('login.html')
+
+@app.route('/unlogin')
+def unlogin():
+    if (session.get('id')):
+        del session['id']
+    return redirect(url_for('index'))
+
 
 
 # Личный кабинет волонтера - Вход - обработка формы
@@ -199,18 +211,18 @@ def cabinet(action):
         # и выбираем из них только те, которые посетил пользователь с id записанным в сессию
         cur = cur.execute('SELECT event.id_evt, event.event, event.activity, event.date FROM event JOIN registration ON event.id_evt=registration.id_evt WHERE registration.id_prsn={} AND registration.visit =1'.format(session['id']))
         # В переменной Контент формируем таблицу для вывода
-        content = '<table><thead><th>Событие</th><th>Активность/Предмет</th><th>Дата</th><th></th></thead>'
+        content = '<table class="table table-striped"><thead><th>Событие</th><th>Активность/Предмет</th><th>Дата</th><th></th></thead><tbody>'
         # Перебираем все полученные записи
         for row in cur:
             # формируем строки таблицы только из тех событий даты которых больше текущей даты
             content += '<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td></tr>'.format( row[1],row[2],row[3], '<a href=''>Получить благодарность</a>')
-        content += '</table>'
+        content += '</tbody></table>'
     elif (action=='regevt'): # отображается когда запрашивается события на которые зарегистрирован пользователь
         # Получаем пересекающиеся данные из таблиц События и Регистрации
         # и выбираем из них только те, на которые зарегистрирован пользователь с id записанным в сессию
         cur = cur.execute('SELECT event.id_evt, event.event, event.activity, event.date FROM event JOIN registration ON event.id_evt=registration.id_evt WHERE registration.id_prsn={}'.format(session['id']))
         # В переменной Контент формируем таблицу для вывода
-        content = '<table><thead><th>Событие</th><th>Активность/Предмет</th><th>Дата</th><th></th></thead>'
+        content = '<table class="table table-striped"><thead><th>Событие</th><th>Активность/Предмет</th><th>Дата</th><th></th></thead><tbody>'
         # Перебираем все полученные записи
         for row in cur:
             # Получаем из ячейки Дата данные и превращаем их в массив разделяя строку по точкам
@@ -224,13 +236,13 @@ def cabinet(action):
                 delreg = '<a href="/unregistration/{}">Отменить регистрацию</a>'.format(row[0])
                 # формируем строки таблицы только из тех событий даты которых больше текущей даты.
                 content += '<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td></tr>'.format( row[1],row[2],row[3],delreg)
-        content += '</table>'
+        content += '</tbody></table>'
     else:    # Отображается когда показываются предстоящие события на которые можно зарегистрироваться
         # Делаем выборку событий в которх зарегистрировался пользователь с id сохранным в сессии из таблицы Регистриция
         # Из таблицы События выбираем события с id_evt  не входящим в первую выборку, т.е. те на которые данный пользователь еще не регистрировался
         cur = cur.execute('SELECT * FROM event WHERE id_evt NOT IN (SELECT id_evt FROM registration WHERE id_prsn ={})'.format(session['id']))
         # формируем переменную контент из строк вышеуказанной выборки
-        content = '<table><thead><th>Событие</th><th>Активность/Предмет</th><th>Дата</th><th></th></thead>'
+        content = '<table class="table table-striped"><thead><th>Событие</th><th>Активность/Предмет</th><th>Дата</th><th></th></thead><tbody>'
         for row in cur:
             ls = row[3].split('.')
             ls.reverse()
@@ -238,7 +250,7 @@ def cabinet(action):
             if (ls>int(''.join(date.today().isoformat().split('-')))):
                 reg = '<a href=/registration/{}>Зарегистрироваться</a>'.format(row[0])
                 content += '<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td></tr>'.format( row[1],row[2],row[3],reg)
-        content += '</table>'
+        content += '</tbody></table>'
     # Закрываем БД и выводим шаблон ЛК передавая ФИО пользователя и контент для отображения на странице
     conn.close()
     return render_template('cabinet.html', volonteer=volonteer, content=content)
