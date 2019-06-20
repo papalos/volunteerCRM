@@ -1,27 +1,33 @@
 {%extends "basic.html"%}
 {%block title%}Легион-Регистрация{%endblock%}
 {%block body%}
+
 <div class="container w-50 p-3 border rounded-lg">
     <h3 class="mb-4">Регистрация нового волонтера</h3>
-<form action="/personview" method="post">
-    <p class="row"><label class="col-4">Фамилия: </label><input class="col-7" type="text" name="surname" /></p>
-    <p class="row"><label class="col-4">Имя: </label><input class="col-7" type="text" name="name" /></p>
-    <p class="row"><label class="col-4">Отчество: </label><input class="col-7" type="text" name="patronymic" /></p>
-    <p class="row"><label class="col-4">Дата рождения: </label><input class="col-7" type="text" name="birthday" /></p>
-    <p class="row">
-        <label class="col-4">Факультет: </label>
-        <select class="col-7" name="faculty">
-            {% for i in facultes %}
-            <option>{{i[2]}}</option>
-            {% endfor%}
-        </select>
-    </p>
-    <p class="row"><label class="col-4">E-mail: </label><input class="col-7" type="text" name="email" /></p>
-    <p class="row"><label class="col-4">Телефон: </label><input class="col-7" type="text" name="phone" /></p>
-    <p class="row"><label class="col-4">Логин: </label><input class="col-7" type="text" name="login" /></p>
-    <p class="row"><label class="col-4">Пароль: </label><input class="col-7" type="text" name="password" /></p>
-    <p class="text-right m-0" ><input class="mr-4" type="submit" value="Зарегистрироваться" /></p>
-</form>
+    <form action="/personview" method="post">
+        <p class="row"><label class="col-4">Фамилия: </label><input class="col-7" type="text" name="surname" /></p>
+        <p class="row"><label class="col-4">Имя: </label><input class="col-7" type="text" name="name" /></p>
+        <p class="row"><label class="col-4">Отчество: </label><input class="col-7" type="text" name="patronymic" /></p>
+        <p class="row"><label class="col-4">Дата рождения: </label><input class="col-7" type="text" name="birthday" /></p>
+        <p class="row">
+            <label class="col-4">Факультет: </label>
+            <select class="col-7" name="faculty">
+                {% for i in facultes %}
+                <option>{{i[2]}}</option>
+                {% endfor%}
+            </select>
+        </p>
+        <p id="erremail" style="display:none" class="row"><span class="col-1 text-danger">Неверный формат электронной почты</span></p>
+        <p id="err2email" style="display:none" class="row"><span class="col-1 text-danger">Такой адресс почты уже существует в базе данных</span></p>
+        <p class="row"><label class="col-4">E-mail: </label><input id="vltremail" class="col-7" type="text" name="email" /></p>
+        <p id="errtel" style="display:none" class="row"><span class="col-1 text-danger">Неверный формат телефонного номера</span></p>
+        <p class="row"><label class="col-4">Телефон: </label><input id="vltrtel" class="col-7" type="text" name="phone" /></p>
+        <p class="row"><label class="col-4">Логин: </label><input id="vlrtlog" class="col-7" type="text" name="login" /></p>
+        <p id="errpass" style="display:none"><span class="col-11 text-danger">Пароль не должен совпадать с логином</span></p>
+        <p class="row"><label class="col-4">Пароль: </label><input id="vltrpass" class="col-7" type="text" name="password" /></p>
+        <p class="text-right m-0"><input class="mr-4" type="submit" value="Зарегистрироваться" /></p>
+    </form>
 </div>
 <br /><br />
+<script src="/static/js/script.js"></script>
 {%endblock%}

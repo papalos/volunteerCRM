@@ -1,15 +1,17 @@
 from flask import Flask, render_template, request, redirect, url_for, session     # инструменты Flask
-import sqlite3                                                                    # для работы с БД SQLite
-from datetime import date, timedelta                                              # класс для работы с датой
-import random                                                                     # для генерации случайных чисел
-import mail                                                                       # отправка сообщения для подтверждения регистрации
-import checker                                                                    # проверки
+import sqlite3                                                                               # для работы с БД SQLite
+from datetime import date, timedelta                                                         # класс для работы с датой
+import random                                                                                # для генерации случайных чисел
+import mail                                                                                  # отправка сообщения для подтверждения регистрации
+import checker                                                                               # проверки
 from admin.admin import panel
 
 
 app = Flask(__name__)
 # Ключ шифорования для работы с сессиями
 app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
+
+app.register_blueprint(panel, url_prefix='/admin')
 
 # ---------------- начало скрипта ----------------- #
 
@@ -22,6 +24,17 @@ def index():
     cur.execute('SELECT * FROM news ORDER BY id DESC')
     news = cur.fetchall()
     return render_template('index.html', news=news)
+
+
+@app.route('/xxx')
+def xxx():
+    conn = sqlite3.connect('sql/volonteer.db')
+    cur=conn.cursor()
+    cur.execute('SELECT email FROM person')
+    mails = cur.fetchall()
+    mail = [i[0] for i in mails]
+    return str(request.args['mail'] in mail)
+
 
 # II Панель администратора
 # Управление пользователями
@@ -109,11 +122,12 @@ def personview():
     conn.commit()
     # Закрываем соединение с базой
     conn.close()
-
+    
     #* Отправка почтового сообщения с подтверждением регистрации пользователю
     #* ссылка со сгенерированным числом, для перезаписи из временной таблицы в таблицу пользователей
-    host = request.host_url.split(':')                       # парсим адрес хоста
-    link=host[0]+':'+host[1]+url_for('confirm',hash=rand)    # собираем ссылку из хоста, страницы проверки и случайного числа сгенерированного для пользователя
+    host = request.host_url.split(':')                    # парсим адрес хоста
+    link=host[0]+':'+host[1]+'confirm/'+rand              # собираем ссылку из хоста, страницы проверки и случайного числа сгенерированного для пользователя
+    
     mail.to_volunteer(email, link)                           # функция отправки сообщения из файла mail.py
     return '<span>На ваш почтовый адрес отправлена ссылка для подтверждения регистрации</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
 
@@ -163,14 +177,17 @@ def unlogin():
 def cabinetin():
     # Получаем из формы логин и пароль
     login = request.form['login']
-    password = request.form['password']
+    password = request.form['password']       
+
 
     # Если вход выполнил администратор (тест)    
     if checker.pswAdm(login,password):
         # Сохраняем id администратора в сессии
         session['id']='admin'
         # Переходим на страницу отображения ЛК
-        return redirect(url_for('administrator.index_adm'))
+        return redirect(url_for('administrator.index_adm'))    
+    
+    
 
     # Подключаемся к БД
     conn = sqlite3.connect("sql/volonteer.db")
@@ -189,6 +206,7 @@ def cabinetin():
             return redirect(url_for('cabinet', action='nextevt'))
     
     conn.close()
+
     # Если записи не были найдены возвращаем пользователя на главную страницу.
     return '<span>Увы, но вы не зарегистрированы!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
 
@@ -211,11 +229,15 @@ def cabinet(action):
         # и выбираем из них только те, которые посетил пользователь с id записанным в сессию
         cur = cur.execute('SELECT event.id_evt, event.event, event.activity, event.date FROM event JOIN registration ON event.id_evt=registration.id_evt WHERE registration.id_prsn={} AND registration.visit =1'.format(session['id']))
         # В переменной Контент формируем таблицу для вывода
-        content = '<table class="table table-striped"><thead><th>Событие</th><th>Активность/Предмет</th><th>Дата</th><th></th></thead><tbody>'
+        content = '<table class="table table-striped"><thead><th>Событие</th><th>Активность/Предмет</th><th>Дата</th><th>Код подтверждения</th></thead><tbody>'
         # Перебираем все полученные записи
         for row in cur:
+            # формируем код подтверждения посещения состоит из id события, даты события, id участника
+            a,b,c = row[3].split('.')
+            ls = (str(row[0]),str(int(a)),str(int(c)-2010),str(session['id']),str(int(b)))
+            code = '-'.join(ls)
             # формируем строки таблицы только из тех событий даты которых больше текущей даты
-            content += '<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td></tr>'.format( row[1],row[2],row[3], '<a href=''>Получить благодарность</a>')
+            content += '<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td></tr>'.format( row[1],row[2],row[3],code)
         content += '</tbody></table>'
     elif (action=='regevt'): # отображается когда запрашивается события на которые зарегистрирован пользователь
         # Получаем пересекающиеся данные из таблиц События и Регистрации
@@ -256,6 +278,7 @@ def cabinet(action):
     return render_template('cabinet.html', volonteer=volonteer, content=content)
 
 
+
 # Личный кабинет - регистрация пользователя на событие
 @app.route('/registration/<id_evt>', methods=['GET', 'POST'])
 def registration(id_evt):
@@ -287,6 +310,5 @@ def unregistration(id_evt):
 # int(''.join(date.today().isoformat().split('-'))) # - получение числа из текущей даты, необходим следующий импорт: from datetime import date
 # ----------------------- Конец скрипта ------------------------ #
 if (__name__ == '__main__'):
-    app.register_blueprint(panel, url_prefix='/admin')
-    app.run(debug=False)
     
+    app.run(debug=True)

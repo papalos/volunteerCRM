@@ -32,11 +32,11 @@
 <div class="table">
 <table class="table table-striped m-auto">
 	<thead>
-	<th>Событие</th><th>Активность/Предмет</th><th>Дата</th><th>Редактировать</th><th>Статистика</th>
+	<th>Событие</th><th>Активность/Предмет</th><th>Дата</th><th>Редактировать</th><th colspan="2" align="center">Статистика</th>
 	</thead>
 	{%for evt in events%}
 	<tr>
-	<td>{{evt[1]}}</td><td>{{evt[2]}}</td><td>{{evt[3]}}</td><td><a href="/admin/deletevt/{{evt[0]}}">удалить<a></td><td><a href="/admin/stat/{{evt[0]}}">статистика регистраций<a></td>
+	<td>{{evt[1]}}</td><td>{{evt[2]}}</td><td>{{evt[3]}}</td><td><a href="/admin/deletevt/{{evt[0]}}">удалить<a></td><td><a href="/admin/stat/{{evt[0]}}">регистрации<a></td><td><a href="/admin/visit/{{evt[0]}}">посещения<a></td>
 	</tr>
 	{%endfor%}
 </table>
