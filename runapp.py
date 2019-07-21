@@ -94,6 +94,8 @@ def personview():
     today = date.today()
     # преобразование даты в строку
     date_reg = str(today)
+    sex=request.form['sex']
+    year_st=request.form['year_st']
 
     # Соединение с БД
     conn = sqlite3.connect("sql/volonteer.db")
@@ -116,7 +118,7 @@ def personview():
         rand = str(random.randint(3245, 6000000))
 
     # Запись переданных в форме данных во временную таблицу индексируя строку случайным числом, на него же будем ссылаться из письма с подтверждением регистрации
-    cur.execute("INSERT INTO temp_user (hash, surname, name, patronymic, email, faculty, phone, birthday, login, password, date_reg) VALUES ('" +rand+ "', '" +surname+ "', '" +name+ "', '" +patronymic+ "', '" +email+ "', '" +faculty+ "', '" +phone+ "', '" +birthday+ "', '"  +login+ "', '" +password+ "', '" +date_reg+ "')")
+    cur.execute("INSERT INTO temp_user (hash, surname, name, patronymic, email, faculty, phone, birthday, login, password, date_reg, sex, year_st) VALUES ('" +rand+ "', '" +surname+ "', '" +name+ "', '" +patronymic+ "', '" +email+ "', '" +faculty+ "', '" +phone+ "', '" +birthday+ "', '"  +login+ "', '" +password+ "', '" +date_reg+ "', '" +sex+ "', '" +year_st+ "')")
 
     # Сохраняем изменения
     conn.commit()

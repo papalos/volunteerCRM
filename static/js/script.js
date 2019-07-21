@@ -22,6 +22,20 @@ let log = gId("vlrtlog");
 let pass = gId("vltrpass");
 let errpass = gId("errpass");
 
+// чекбокс для продтверждения подлиности данных
+let ch = gId("check");
+
+// чекбокс для продтверждения подлиности данных
+let b = gId("butt");
+
+
+
+// переменные для флагов
+let f1 = false, f2 = false, f3 = false, f4 = false;
+b.setAttribute('disabled', 'disabled');
+console.log("test");
+
+
 // объект AJAX
 let ajax = new XMLHttpRequest();
 
@@ -29,15 +43,18 @@ ajax.onreadystatechange = function () {
     if (ajax.readyState != 4) return;
 
     if (ajax.status != 200) {
-        alert(ajax.status + ': ' + ajax.statusText);
+        alert(ajax.status + ': ' + ajax.statusText); // удалить в конечной версии
     } else {
         //alert(ajax.responseText);
         if (ajax.responseText == "True") {
             err2mail.style.display = 'inline';
+            f1 = false;
         }
         else {
             err2mail.style.display = 'none';
+            f1 = true;
         }
+        control();
     }
 }
 
@@ -48,7 +65,7 @@ email.onblur = function () {
     if (flag) {
         errmail.style.display = "none";
         ajax.open('get', '/xxx?mail=' + email.value, true);
-        ajax.send();        
+        ajax.send();
     }
     else {
         errmail.style.display = "inline";
@@ -57,27 +74,49 @@ email.onblur = function () {
     //console.log(flag);
 }
 
-tel.onblur = function(){
+tel.onblur = function () {
     let f = regtel.test(tel.value);
     if (f) {
         errtel.style.display = "none";
+        f2 = true;
     }
     else {
         errtel.style.display = "inline";
+        f2 = false;
     }
-    //console.log(f);
-    //console.log(tel.value);
+    control();
 }
 
 pass.onblur = function () {
-    let ecv = (log.value!==pass.value);
+    let ecv = (log.value !== pass.value);
     if (ecv) {
         errpass.style.display = "none";
+        f3 = true;
     }
     else {
         errpass.style.display = "block";
+        f3 = false;
     }
-    console.log(ecv);
-    //console.log(tel.value);
+    control();
 }
 
+
+ch.onchange = function () {
+    if (ch.checked) {
+        f4 = true;
+    }
+    else {
+        f4 = false;
+    }
+    control();
+};
+
+function control() {
+    if (f1 && f2 && f3 && f4) {
+        b.removeAttribute('disabled');
+    }
+    else {
+        b.setAttribute('disabled', 'disabled');
+    }
+    // console.log(f1 + f2 + f3 + f4); //test
+}

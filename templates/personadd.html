@@ -9,6 +9,15 @@
         <p class="row"><label class="col-4">Имя: </label><input class="col-7" type="text" name="name" /></p>
         <p class="row"><label class="col-4">Отчество: </label><input class="col-7" type="text" name="patronymic" /></p>
         <p class="row"><label class="col-4">Дата рождения: </label><input class="col-7" type="text" name="birthday" /></p>
+        <!--Изменения Старт-->
+        <p class="row">
+            <label class="col-4">Пол: </label>
+            <select class="col-7" name="sex">
+                <option value="м">Мужской</option>
+                <option value="ж">Женский</option>
+            </select>
+        </p>
+        <!--Изменения Конец-->
         <p class="row">
             <label class="col-4">Факультет: </label>
             <select class="col-7" name="faculty">
@@ -17,15 +26,32 @@
                 {% endfor%}
             </select>
         </p>
+        <!--Изменения Старт-->
+        <p class="row">
+            <label class="col-4">Курс: </label>
+            <select class="col-7" name="year_st">
+                <option>Бакалавриат 1</option>
+                <option>Бакалавриат 2</option>
+                <option>Бакалавриат 3</option>
+                <option>Бакалавриат 4</option>
+                <option>Магистратура 1</option>
+                <option>Магистратура 2</option>
+                <option>Другое</option>
+            </select>
+        </p>
+        <!--Изменения Конец-->
         <p id="erremail" style="display:none" class="row"><span class="col-1 text-danger">Неверный формат электронной почты</span></p>
-        <p id="err2email" style="display:none" class="row"><span class="col-1 text-danger">Такой адресс почты уже существует в базе данных</span></p>
+        <p id="err2email" style="display:none" class="row"><span class="col-1 text-danger">Такой адрес почты уже существует в базе данных</span></p>
         <p class="row"><label class="col-4">E-mail: </label><input id="vltremail" class="col-7" type="text" name="email" /></p>
         <p id="errtel" style="display:none" class="row"><span class="col-1 text-danger">Неверный формат телефонного номера</span></p>
         <p class="row"><label class="col-4">Телефон: </label><input id="vltrtel" class="col-7" type="text" name="phone" /></p>
         <p class="row"><label class="col-4">Логин: </label><input id="vlrtlog" class="col-7" type="text" name="login" /></p>
         <p id="errpass" style="display:none"><span class="col-11 text-danger">Пароль не должен совпадать с логином</span></p>
-        <p class="row"><label class="col-4">Пароль: </label><input id="vltrpass" class="col-7" type="text" name="password" /></p>
-        <p class="text-right m-0"><input class="mr-4" type="submit" value="Зарегистрироваться" /></p>
+        <!--Изменения Старт-->
+        <p class="row"><label class="col-4">Пароль: </label><input id="vltrpass" class="col-7" type="password" name="password"></p>
+        <p class="row"><label class="col-4">Подтверждаю достоверность предоставленной информации: </label><input id="check" class="col-7" type="checkbox" name="check"></p>
+        <!--Изменения Конец-->
+        <p class="text-right m-0"><input id="butt" class="mr-4" type="submit" value="Зарегистрироваться" /></p>
     </form>
 </div>
 <br /><br />
