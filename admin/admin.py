@@ -63,6 +63,14 @@ def event():
     conn.close()
     return render_template('event.html', events=events)
 
+# Панель администратора (события) - выводит список всех событий
+@panel.route('/event_add_html')
+def event_add_html():
+    # является ли пользователь администратором
+    if session.get('id') != 'admin':
+        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
+    return render_template('event_add_html.html')
+
 # Панель администратора (события) - выполняет добавление нового события и редирект к списку всех событий
 @panel.route('/eventadd', methods=['GET', 'POST'])
 def eventadd():
@@ -73,12 +81,19 @@ def eventadd():
     event=request.form['event']
     activity=request.form['activity']
     date=request.form['date']
+    time_in=request.form['time_in']
+    time_start=request.form['time_start']
+    duration=request.form['duration']
+    staff_min=request.form['staff_min']
+    staff_max=request.form['staff_max']
+    classroom_min=request.form['classroom_min']
+    classroom_max=request.form['classroom_max']
 
     # Соединение с БД
     conn = sqlite3.connect("sql/volonteer.db")
     cur = conn.cursor()    
     # Вставка записи в таблицу событий
-    cur.execute("INSERT INTO event (event, activity, date) VALUES ('" +event+ "', '" +activity+ "', '" +date+ "')")
+    cur.execute("INSERT INTO event (event, activity, date, time_in, time_start, duration, staff_min, staff_max, classroom_min, classroom_max) VALUES ('" +event+ "', '" +activity+ "', '" +date+ "', '" +time_in+ "', '" +time_start+ "', '" +duration+ "', '" +staff_min+ "', '" +staff_max+ "', '" +classroom_min+ "', '" +classroom_max+ "')")
     # Фиксируем изменения в базе
     conn.commit()    
     # Закрываем соединение

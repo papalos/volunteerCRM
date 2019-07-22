@@ -1,33 +1,7 @@
 {%extends "basicadm.html"%}
 {%block title%}Легион-События{%endblock%}
 {%block body%}
-<div class="m-3 p-3 border rounded-lg">
-    
-<h3 class="m-2">Создать событие</h3>
-<div class="addform">
-<form action="/admin/eventadd" method="post">
-<table class="m-auto">
-	<thead>
-	<th>Событие</th><th>Активность/Предмет</th><th>Дата</th>
-	</thead>
-	<tr>
-		<td>
-			<input type="text" name="event" />
-		</td>
-		<td>
-			<input type="text" name="activity" />
-		</td>
-		<td>
-			<input type="text" name="date" />
-		</td>
-        <td>
-            <input type="submit" value="Создать" />
-		</td>
-	</tr>
-</table>
-
-</form>
-<div />
+<a class="m-2" href="{{url_for('administrator.event_add_html')}}">Создать событие</a>
 <h2 class="m-2">Все события:</h2>
 <div class="table">
 <table class="table table-striped m-auto">

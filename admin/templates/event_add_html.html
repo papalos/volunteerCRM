@@ -1,0 +1,91 @@
+{%extends "basicadm.html"%}
+{%block title%}Легион-События{%endblock%}
+{%block body%}
+<div class="m-3 p-3 border rounded-lg">
+    
+<h3 class="m-2">Создать событие</h3>
+<div class="addform">
+<form action="/admin/eventadd" method="post">
+    <table class="m-auto">
+        <thead>
+        </thead>
+        <tr>
+            <td>Событие</td>
+            <td>
+                <input type="text" name="event" />
+            </td>
+        </tr>
+        <tr>
+            <td>Активность/Предмет</td>
+            <td>
+                <input type="text" name="activity" />
+            </td>
+        </tr>
+        <tr>
+            <td>Дата</td>
+            <td>
+                <input type="text" name="date" />
+            </td>
+        </tr>
+        <tr>
+            <td>Время прихода</td>
+            <td>
+                <input type="text" name="time_in" />
+            </td>
+        </tr>
+        <tr>
+            <td>Время начала состязания</td>
+            <td>
+                <input type="text" name="time_start" />
+            </td>
+        </tr>
+        <tr>
+            <td>Продолжительность</td>
+            <td>
+                <input type="text" name="duration" />
+            </td>
+        </tr>
+        <tr>
+            <td>Адрес проведения</td>
+            <td>
+                <input type="text" name="address" />
+            </td>
+        </tr>
+        <tr>
+            <td>Минимальное количество в штаб</td>
+            <td>
+                <input type="text" name="staff_min" />
+            </td>
+        </tr>
+        <tr>
+            <td>Максимальное количество в штаб</td>
+            <td>
+                <input type="text" name="staff_max" />
+            </td>
+        </tr>
+        <tr>
+            <td>Минимальное количество в аудиторию</td>
+            <td>
+                <input type="text" name="classroom_min" />
+            </td>
+        </tr>
+        <tr>
+            <td>Максимальное количество в аудиторию</td>
+            <td>
+                <input type="text" name="classroom_max" />
+            </td>
+        </tr>
+        <tr colspan="2">
+            <td>
+                <input type="submit" value="Создать" />
+            </td>
+        </tr>
+    </table>
+
+</form>
+<div />
+
+</div>
+
+</div>
+{%endblock%}
