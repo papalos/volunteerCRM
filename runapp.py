@@ -266,29 +266,55 @@ def cabinet(action):
         # Из таблицы События выбираем события с id_evt  не входящим в первую выборку, т.е. те на которые данный пользователь еще не регистрировался
         cur = cur.execute('SELECT * FROM event WHERE id_evt NOT IN (SELECT id_evt FROM registration WHERE id_prsn ={})'.format(session['id']))
         # формируем переменную контент из строк вышеуказанной выборки
-        content = '<table class="table table-striped"><thead><th>Событие</th><th>Активность/Предмет</th><th>Дата</th><th></th></thead><tbody>'
+        content = '<table class="table table-striped"><thead><th>Событие</th><th>Активность/Предмет</th><th>Дата</th><th>Время прихода</th><th></th></thead><tbody>'
         for row in cur:
             ls = row[3].split('.')
             ls.reverse()
             ls = int(''.join(ls))
             if (ls>int(''.join(date.today().isoformat().split('-')))):
-                reg = '<a href=/registration/{}>Зарегистрироваться</a>'.format(row[0])
-                content += '<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td></tr>'.format( row[1],row[2],row[3],reg)
+                reg = '<a href=/registration_view/{}>Зарегистрироваться</a>'.format(row[0])
+                content += '<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td><td>{4}</td></tr>'.format( row[1],row[2],row[3],row[4],reg)
         content += '</tbody></table>'
     # Закрываем БД и выводим шаблон ЛК передавая ФИО пользователя и контент для отображения на странице
     conn.close()
     return render_template('cabinet.html', volonteer=volonteer, content=content)
 
+# Личный кабинет - регистрация пользователя на событие
+@app.route('/registration_view/<id_evt>', methods=['GET', 'POST'])
+def registration_view(id_evt):
+    if(session.get('id') is None):
+        return 'Ошибка идентификации вернитесь на <a href="{}">главную страницу</a>'.format(url_for('index'))
+    conn = sqlite3.connect("sql/volonteer.db")
+    curI = conn.cursor()
+    curII = conn.cursor()
+    currIII = conn.cursor()
+    
+    # Получаем ФИО пользователя по id записанного в сессию
+    curI.execute('SELECT * FROM person WHERE id_prsn={}'.format(session['id']))
+    # Получаем данные о событии по его id
+    curII.execute('SELECT * FROM event WHERE id_evt={}'.format(id_evt))
+    # Количество регистраций на определенное событие по его id
+    currIII.execute('SELECT role FROM registration WHERE id_evt={}'.format(id_evt))
+    # Сохраняем ФИО в переменную для передачи его в шаблон
+    volonteer = curI.fetchone()
+    event = curII.fetchone()
+    num_evt = [x[0] for x in currIII.fetchall()]
+    num_staff = num_evt.count('штаб')
+    num_classroom = num_evt.count('аудитория')
+    
+    conn.close()
 
+    return  render_template('registration_view.html', volonteer=volonteer, event=event, num_staff = num_staff, num_classroom = num_classroom)
 
 # Личный кабинет - регистрация пользователя на событие
-@app.route('/registration/<id_evt>', methods=['GET', 'POST'])
-def registration(id_evt):
+@app.route('/registration', methods=['GET', 'POST'])
+def registration():
+    role = request.form.get('role')
     # Соединение с БД
     conn = sqlite3.connect("sql/volonteer.db")
     cur = conn.cursor()
     # Вставка записи в таблицу регистраций
-    cur.execute("INSERT INTO registration (id_prsn, id_evt) VALUES ('" +str(session['id'])+ "', '" +id_evt+ "')")
+    cur.execute("INSERT INTO registration (id_prsn, id_evt, role) VALUES ('" +str(session['id'])+ "', '" +request.form.get('id_evt')+ "', '" +role+ "')")
     # Сохраняем изменения
     conn.commit()
     conn.close()
