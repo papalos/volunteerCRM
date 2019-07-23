@@ -5,16 +5,17 @@
     
 <h2 class="m-2">Статистика регистраций на {{event[1]}} - {{event[2]}}</h2>
 
-<span class="text-danger">Количество зарегистрировавшихся на событие: {{count}}</span>
+<div class="text-danger">Количество зарегистрировавшихся в Штаб: {{x_staff}}</div>
+<div class="text-danger">Количество зарегистрировавшихся в Аудитории: {{x_classroom}}</div>
 <form action="/admin/check" method="post">
 <input type="hidden" name="event" value="{{event[0]}}">
 <table class="table table-striped m-auto">
 	<thead>
-        <th>id</th><th>Фамилия</th><th>Имя</th><th>Отчество</th><th>Факультет</th><th>e-mail</th><th>Телефон</th><th>Дата рождения</th><th>Присутствие</th>
+        <th>id</th><th>Фамилия</th><th>Имя</th><th>Отчество</th><th>Факультет</th><th>e-mail</th><th>Телефон</th><th>Дата рождения</th><th>Роль</th><th>Присутствие</th><th>Аудитория</th>
 	</thead>
 	{%for r in registration%}
 	<tr>
-	    <td>{{r[0]}}</td><td>{{r[1]}}</td><td>{{r[2]}}</td><td>{{r[3]}}</td><td>{{r[4]}}</td><td>{{r[5]}}</td><td>{{r[6]}}</td><td>{{r[7]}}</td><td><input type="checkbox" name="{{r[0]}}"/></td>
+	    <td>{{r[0]}}</td><td>{{r[1]}}</td><td>{{r[2]}}</td><td>{{r[3]}}</td><td>{{r[4]}}</td><td>{{r[5]}}</td><td>{{r[6]}}</td><td>{{r[7]}}</td><td>{{r[8]}}</td><td><input type="checkbox" name="{{r[0]}}"/></td><td><input type="text" size="10" name="classroom_for_{{r[0]}}" /></td>
 	</tr>
 	{%endfor%}
 </table>

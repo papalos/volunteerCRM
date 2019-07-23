@@ -244,9 +244,9 @@ def cabinet(action):
     elif (action=='regevt'): # отображается когда запрашивается события на которые зарегистрирован пользователь
         # Получаем пересекающиеся данные из таблиц События и Регистрации
         # и выбираем из них только те, на которые зарегистрирован пользователь с id записанным в сессию
-        cur = cur.execute('SELECT event.id_evt, event.event, event.activity, event.date FROM event JOIN registration ON event.id_evt=registration.id_evt WHERE registration.id_prsn={}'.format(session['id']))
+        cur = cur.execute('SELECT event.id_evt, event.event, event.activity, event.date, registration.role FROM event JOIN registration ON event.id_evt=registration.id_evt WHERE registration.id_prsn={}'.format(session['id']))
         # В переменной Контент формируем таблицу для вывода
-        content = '<table class="table table-striped"><thead><th>Событие</th><th>Активность/Предмет</th><th>Дата</th><th></th></thead><tbody>'
+        content = '<table class="table table-striped"><thead><th>Событие</th><th>Активность/Предмет</th><th>Дата</th><th>Роль</th><th></th></thead><tbody>'
         # Перебираем все полученные записи
         for row in cur:
             # Получаем из ячейки Дата данные и превращаем их в массив разделяя строку по точкам
@@ -259,7 +259,7 @@ def cabinet(action):
             if (ls>int(''.join(date.today().isoformat().split('-')))):
                 delreg = '<a href="/unregistration/{}">Отменить регистрацию</a>'.format(row[0])
                 # формируем строки таблицы только из тех событий даты которых больше текущей даты.
-                content += '<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td></tr>'.format( row[1],row[2],row[3],delreg)
+                content += '<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td><td>{4}</td></tr>'.format( row[1],row[2],row[3],row[4], delreg)
         content += '</tbody></table>'
     else:    # Отображается когда показываются предстоящие события на которые можно зарегистрироваться
         # Делаем выборку событий в которх зарегистрировался пользователь с id сохранным в сессии из таблицы Регистриция

@@ -127,15 +127,22 @@ def stat(id_evt):
     conn = sqlite3.connect("sql/volonteer.db")
     curI = conn.cursor()
     curII = conn.cursor()
+    curIII = conn.cursor()
     # Выборка волонтеров зарегистрированных на конкретное событие
-    curI.execute("SELECT p.id_prsn, surname_prsn, name_prsn, patronymic_prsn, faculty, email, phone, birthday FROM registration AS r JOIN person AS p ON r.id_prsn=p.id_prsn WHERE r.id_evt = {}".format(id_evt))
+    curI.execute("SELECT p.id_prsn, surname_prsn, name_prsn, patronymic_prsn, faculty, email, phone, birthday, r.role FROM registration AS r JOIN person AS p ON r.id_prsn=p.id_prsn WHERE r.id_evt = {}".format(id_evt))
     # Данные о событии по его id
     curII.execute("SELECT * FROM event WHERE id_evt = {}".format(id_evt))
     registration = curI.fetchall()
-    count = len(registration)
+    x_count = [x[8] for x in registration]
+    x_staff = x_count.count('штаб')
+    x_classroom = x_count.count('аудитория')
     event = curII.fetchone()
+    
+    conn.close()
+
+
     # дописать тело. Показывает сколько человек зарегистрировалось на событие и вы водит поименный список с возможностью отмечать присутствие
-    return render_template('stat.html', registration=registration, event=event, count=count)
+    return render_template('stat.html', registration=registration, event=event, x_staff=x_staff, x_classroom=x_classroom)
 
 # Панель администратора (события) - статистика регистраций на событие, списки волонтеров зарегистрировавшихся на конкретное событие
 @panel.route('/visit/<id_evt>')
@@ -175,7 +182,7 @@ def check():
     for key in _form:
         if _form[key] == 'on':
             # Меняем нолик на единицу в таблице регистраций, устанавливая посещение волонтером с id = key мероприятия с id = event
-            cur.execute("UPDATE registration SET visit = 1 WHERE id_prsn = {0} AND id_evt={1}".format(key, event))
+            cur.execute("UPDATE registration SET visit = 1, classroom={2} WHERE id_prsn = {0} AND id_evt={1}".format(key, event, _form.get('classroom_for_'+key)))
         conn.commit()
 
     conn.close()    
