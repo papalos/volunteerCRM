@@ -88,12 +88,13 @@ def eventadd():
     staff_max=request.form['staff_max']
     classroom_min=request.form['classroom_min']
     classroom_max=request.form['classroom_max']
+    address=request.form['address']
 
     # Соединение с БД
     conn = sqlite3.connect("sql/volonteer.db")
     cur = conn.cursor()    
     # Вставка записи в таблицу событий
-    cur.execute("INSERT INTO event (event, activity, date, time_in, time_start, duration, staff_min, staff_max, classroom_min, classroom_max) VALUES ('" +event+ "', '" +activity+ "', '" +date+ "', '" +time_in+ "', '" +time_start+ "', '" +duration+ "', '" +staff_min+ "', '" +staff_max+ "', '" +classroom_min+ "', '" +classroom_max+ "')")
+    cur.execute("INSERT INTO event (event, activity, date, time_in, time_start, duration, staff_min, staff_max, classroom_min, classroom_max, address) VALUES ('" +event+ "', '" +activity+ "', '" +date+ "', '" +time_in+ "', '" +time_start+ "', '" +duration+ "', '" +staff_min+ "', '" +staff_max+ "', '" +classroom_min+ "', '" +classroom_max+ "', '" +address+ "')")
     # Фиксируем изменения в базе
     conn.commit()    
     # Закрываем соединение
@@ -129,7 +130,7 @@ def stat(id_evt):
     curII = conn.cursor()
     curIII = conn.cursor()
     # Выборка волонтеров зарегистрированных на конкретное событие
-    curI.execute("SELECT p.id_prsn, surname_prsn, name_prsn, patronymic_prsn, faculty, email, phone, birthday, r.role FROM registration AS r JOIN person AS p ON r.id_prsn=p.id_prsn WHERE r.id_evt = {}".format(id_evt))
+    curI.execute("SELECT p.id_prsn, surname_prsn, name_prsn, patronymic_prsn, faculty, email, phone, birthday, r.role FROM registration AS r JOIN person AS p ON r.id_prsn=p.id_prsn WHERE r.id_evt = {} ORDER BY surname_prsn".format(id_evt))
     # Данные о событии по его id
     curII.execute("SELECT * FROM event WHERE id_evt = {}".format(id_evt))
     registration = curI.fetchall()

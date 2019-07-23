@@ -266,14 +266,14 @@ def cabinet(action):
         # Из таблицы События выбираем события с id_evt  не входящим в первую выборку, т.е. те на которые данный пользователь еще не регистрировался
         cur = cur.execute('SELECT * FROM event WHERE id_evt NOT IN (SELECT id_evt FROM registration WHERE id_prsn ={})'.format(session['id']))
         # формируем переменную контент из строк вышеуказанной выборки
-        content = '<table class="table table-striped"><thead><th>Событие</th><th>Активность/Предмет</th><th>Дата</th><th>Время прихода</th><th></th></thead><tbody>'
+        content = '<table class="table table-striped"><thead><th>Событие</th><th>Активность/Предмет</th><th>Дата</th><th>Время прихода</th><th>Адрес</th><th></th></thead><tbody>'
         for row in cur:
             ls = row[3].split('.')
             ls.reverse()
             ls = int(''.join(ls))
             if (ls>int(''.join(date.today().isoformat().split('-')))):
                 reg = '<a href=/registration_view/{}>Зарегистрироваться</a>'.format(row[0])
-                content += '<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td><td>{4}</td></tr>'.format( row[1],row[2],row[3],row[4],reg)
+                content += '<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td><td>{4}</td><td>{5}</td></tr>'.format( row[1],row[2],row[3],row[4],row[11],reg)
         content += '</tbody></table>'
     # Закрываем БД и выводим шаблон ЛК передавая ФИО пользователя и контент для отображения на странице
     conn.close()
