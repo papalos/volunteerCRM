@@ -235,8 +235,8 @@ def cabinet(action):
         # Перебираем все полученные записи
         for row in cur:
             # формируем код подтверждения посещения состоит из id события, даты события, id участника
-            a,b,c = row[3].split('.')
-            ls = (str(row[0]),str(int(a)),str(int(c)-2010),str(session['id']),str(int(b)))
+            a,b,c = row[3].split('-')
+            ls = (str(row[0]),str(int(c)),str(int(a)-2010),str(session['id']),str(int(b)))
             code = '-'.join(ls)
             # формируем строки таблицы только из тех событий даты которых больше текущей даты
             content += '<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td></tr>'.format( row[1],row[2],row[3],code)
@@ -250,9 +250,7 @@ def cabinet(action):
         # Перебираем все полученные записи
         for row in cur:
             # Получаем из ячейки Дата данные и превращаем их в массив разделяя строку по точкам
-            ls = row[3].split('.')
-            # Инвертируем элементы массива
-            ls.reverse()
+            ls = row[3].split('-')
             # объединяем обратно в единую строку и преобразуем в число
             ls = int(''.join(ls))
             # получаем и преобразуем в число текущую дату и сравниваем его с датой события
@@ -268,8 +266,7 @@ def cabinet(action):
         # формируем переменную контент из строк вышеуказанной выборки
         content = '<table class="table table-striped"><thead><th>Событие</th><th>Активность/Предмет</th><th>Дата</th><th>Время прихода</th><th>Адрес</th><th></th></thead><tbody>'
         for row in cur:
-            ls = row[3].split('.')
-            ls.reverse()
+            ls = row[3].split('-')
             ls = int(''.join(ls))
             if (ls>int(''.join(date.today().isoformat().split('-')))):
                 reg = '<a href=/registration_view/{}>Зарегистрироваться</a>'.format(row[0])

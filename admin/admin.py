@@ -7,6 +7,9 @@ import random                                                                   
 import xlsxwriter                                                                 # создание документа .xmlx
 
 FOR_TABLE = ('Номер_события', 'Событие', 'Активность', 'Дата _проведения', 'Номер_волонтера', 'Фамилия', 'Имя', 'Отчество', 'Факультет', 'email', 'Телефон', 'Дата_рождения', 'Отметка_о_посещении')
+FOR_TABLE_ALLUSERS = ('id', 'Фамилия', 'Имя', 'Отчество', 'Факультет', 'e-mail', 'Телефон', 'Дата рожедния', 'Логин', 'Пароль' , 'Дата регистрации', 'Пол', 'Курс')
+FOR_TABLE_SOMEEVENTS = ('id', 'Событие', 'Активность', 'Дата проведения', 'Время прихода', 'Время начала', 'Продолжительность', 'Штаб_min', 'Штаб_max', 'Аудитория_min', 'Аудитория_max', 'Адресс')
+FOR_TABLE_USERREGISTERONEVENT = ('id', 'Фамилия', 'Имя', 'Отчество', 'Факультет', 'e-mail', 'Телефон', 'День рождения', 'Роль')
 
 panel = Blueprint('administrator', __name__, template_folder='templates')
 
@@ -58,7 +61,7 @@ def event():
     
     conn = sqlite3.connect("sql/volonteer.db")
     cur = conn.cursor()
-    cur.execute('SELECT * FROM event')
+    cur.execute('SELECT * FROM event ORDER BY date DESC')
     events = cur.fetchall()
     conn.close()
     return render_template('event.html', events=events)
@@ -128,7 +131,6 @@ def stat(id_evt):
     conn = sqlite3.connect("sql/volonteer.db")
     curI = conn.cursor()
     curII = conn.cursor()
-    curIII = conn.cursor()
     # Выборка волонтеров зарегистрированных на конкретное событие
     curI.execute("SELECT p.id_prsn, surname_prsn, name_prsn, patronymic_prsn, faculty, email, phone, birthday, r.role FROM registration AS r JOIN person AS p ON r.id_prsn=p.id_prsn WHERE r.id_evt = {} ORDER BY surname_prsn".format(id_evt))
     # Данные о событии по его id
@@ -143,7 +145,7 @@ def stat(id_evt):
 
 
     # дописать тело. Показывает сколько человек зарегистрировалось на событие и вы водит поименный список с возможностью отмечать присутствие
-    return render_template('stat.html', registration=registration, event=event, x_staff=x_staff, x_classroom=x_classroom)
+    return render_template('stat.html', registration=registration, event=event, x_staff=x_staff, x_classroom=x_classroom, id_evt=id_evt)
 
 # Панель администратора (события) - статистика регистраций на событие, списки волонтеров зарегистрировавшихся на конкретное событие
 @panel.route('/visit/<id_evt>')
@@ -240,7 +242,135 @@ def getdata():
     workbook.close()
 
     try:
-        send = send_file('registr.xlsx')
+        send = send_file('registr.xlsx', cache_timeout=0)
+    except:
+        send='Ошибка создания файла!'
+    finally:
+        conn.close()
+    return send
+
+# Выгружает всех зарегистрированных пользователей
+@panel.route('/getallusers')
+def getallusers():
+    if session.get('id') != 'admin':
+        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
+    
+    conn = sqlite3.connect("sql/volonteer.db")
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM person')
+    persons = cur.fetchall()
+    length = len(persons)
+
+    # Создаем книку и лист.
+    workbook = xlsxwriter.Workbook('allusers.xlsx')
+    worksheet = workbook.add_worksheet()
+    
+    # Заносим данные в таблицу
+    row = 0
+    col = 0
+    for h in FOR_TABLE_ALLUSERS:
+        worksheet.write(row, col, h)
+        col += 1
+    row += 1
+    for item in persons:
+        col = 0
+        for element in item:
+            worksheet.write(row, col, element)
+            col += 1
+        row += 1
+
+    worksheet.write(row, 0, date.today().strftime("%Y-%m-%d %H:%M:%S"))
+
+    workbook.close()
+
+    try:
+        send = send_file('allusers.xlsx', cache_timeout=0)
+    except:
+        send='Ошибка создания файла!'
+    finally:
+        conn.close()
+    return send
+
+# Выгружает события по заданным срокам
+@panel.route('/getsomeevents', methods=['GET', 'POST'])
+def getsomeevents():
+    if session.get('id') != 'admin':
+        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
+    _since = request.form.get('since')
+    _to = request.form.get('to')
+
+    conn = sqlite3.connect("sql/volonteer.db")
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM event WHERE date >= "{0}" AND date <= "{1}"'.format(_since, _to))
+    someevents = cur.fetchall()
+    length = len(someevents)
+
+    # Создаем книку и лист.
+    workbook = xlsxwriter.Workbook('someevents.xlsx')
+    worksheet = workbook.add_worksheet()
+    
+    # Заносим данные в таблицу
+    row = 0
+    col = 0
+    for h in FOR_TABLE_SOMEEVENTS:
+        worksheet.write(row, col, h)
+        col += 1
+    row += 1
+    for item in someevents:
+        col = 0
+        for element in item:
+            worksheet.write(row, col, element)
+            col += 1
+        row += 1
+
+    worksheet.write(row, 0, date.today().strftime("%Y-%m-%d %H:%M:%S"))
+
+    workbook.close()
+
+    try:
+        send = send_file('someevents.xlsx', cache_timeout=0)
+    except:
+        send='Ошибка создания файла!'
+    finally:
+        conn.close()
+    return send
+
+# Выгружает зарегистрированных пользователей по конкретному событию
+@panel.route('/getuserregistronevent/<id_evt>', methods=['GET', 'POST'])
+def getuserregistronevent(id_evt):
+    if session.get('id') != 'admin':
+        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
+
+    conn = sqlite3.connect("sql/volonteer.db")
+    cur = conn.cursor()
+    cur.execute("SELECT p.id_prsn, surname_prsn, name_prsn, patronymic_prsn, faculty, email, phone, birthday, r.role FROM registration AS r JOIN person AS p ON r.id_prsn=p.id_prsn WHERE r.id_evt = {} ORDER BY surname_prsn".format(id_evt))
+    userregistronevent = cur.fetchall()
+    length = len(userregistronevent)
+
+    # Создаем книку и лист.
+    workbook = xlsxwriter.Workbook('userregistronevent.xlsx')
+    worksheet = workbook.add_worksheet()
+    
+    # Заносим данные в таблицу
+    row = 0
+    col = 0
+    for h in FOR_TABLE_USERREGISTERONEVENT:
+        worksheet.write(row, col, h)
+        col += 1
+    row += 1
+    for item in userregistronevent:
+        col = 0
+        for element in item:
+            worksheet.write(row, col, element)
+            col += 1
+        row += 1
+
+    worksheet.write(row, 0, date.today().strftime("%Y-%m-%d %H:%M:%S"))
+
+    workbook.close()
+
+    try:
+        send = send_file('userregistronevent.xlsx', cache_timeout=0)
     except:
         send='Ошибка создания файла!'
     finally:

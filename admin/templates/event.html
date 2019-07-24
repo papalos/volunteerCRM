@@ -2,7 +2,7 @@
 {%block title%}Легион-События{%endblock%}
 {%block body%}
 <a class="m-2" href="{{url_for('administrator.event_add_html')}}">Создать событие</a>
-<h2 class="m-2">Все события:</h2>
+<h2 class="m-2">Все события:</h2><div><form action="/admin/getsomeevents" method="post">Выгрузить события за период с <input name="since" type="date" /> по <input name="to" type="date" /> <input type="submit" value="Пуск" /></form></div>
 <div class="table">
 <table class="table table-striped m-auto">
 	<thead>
