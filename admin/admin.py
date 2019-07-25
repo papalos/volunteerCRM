@@ -6,10 +6,12 @@ import random                                                                   
 # import checker                                                                    # проверки
 import xlsxwriter                                                                 # создание документа .xmlx
 
-FOR_TABLE = ('Номер_события', 'Событие', 'Активность', 'Дата _проведения', 'Номер_волонтера', 'Фамилия', 'Имя', 'Отчество', 'Факультет', 'email', 'Телефон', 'Дата_рождения', 'Отметка_о_посещении')
+
+FOR_TABLE = ('Номер_события', 'Событие', 'Активность', 'Дата _проведения', 'Время начала', 'Продолжительность', 'Адрес проведения', 'Номер_волонтера', 'Фамилия', 'Имя', 'Отчество', 'Факультет', 'e-mail', 'Телефон', 'Дата_рождения', 'Пол', 'Курс', 'Отметка_о_посещении', 'Роль выбраная при регистрации', 'Аудитория')
 FOR_TABLE_ALLUSERS = ('id', 'Фамилия', 'Имя', 'Отчество', 'Факультет', 'e-mail', 'Телефон', 'Дата рожедния', 'Логин', 'Пароль' , 'Дата регистрации', 'Пол', 'Курс')
 FOR_TABLE_SOMEEVENTS = ('id', 'Событие', 'Активность', 'Дата проведения', 'Время прихода', 'Время начала', 'Продолжительность', 'Штаб_min', 'Штаб_max', 'Аудитория_min', 'Аудитория_max', 'Адресс')
 FOR_TABLE_USERREGISTERONEVENT = ('id', 'Фамилия', 'Имя', 'Отчество', 'Факультет', 'e-mail', 'Телефон', 'День рождения', 'Роль')
+FOR_TABLE_USERVISIT = ('id', 'Фамилия', 'Имя', 'Отчество', 'Факультет', 'e-mail', 'Телефон', 'Дата рождения', 'Пол', 'Курс', 'Аудитория')
 
 panel = Blueprint('administrator', __name__, template_folder='templates')
 
@@ -158,14 +160,14 @@ def visit(id_evt):
     curI = conn.cursor()
     curII = conn.cursor()
     # Выборка волонтеров зарегистрированных на конкретное событие
-    curI.execute("SELECT p.id_prsn, surname_prsn, name_prsn, patronymic_prsn, faculty, email, phone, birthday FROM registration AS r JOIN person AS p ON r.id_prsn=p.id_prsn WHERE r.id_evt = {} AND visit=1".format(id_evt))
+    curI.execute("SELECT p.id_prsn, surname_prsn, name_prsn, patronymic_prsn, faculty, email, phone, birthday, sex, year_st, classroom FROM registration AS r JOIN person AS p ON r.id_prsn=p.id_prsn WHERE r.id_evt = {} AND visit=1".format(id_evt))
     # Данные о событии по его id
     curII.execute("SELECT * FROM event WHERE id_evt = {}".format(id_evt))
     visited = curI.fetchall()
     count = len(visited)
     event = curII.fetchone()
     # дописать тело. Показывает сколько человек зарегистрировалось на событие и вы водит поименный список с возможностью отмечать присутствие
-    return render_template('visit.html', visited=visited, event=event, count=count)
+    return render_template('visit.html', visited=visited, event=event, count=count, id_evt=id_evt)
 
 
 # Панель администратора (события) - отметить волонтера на событии
@@ -206,16 +208,29 @@ def addpost():
     conn.close()
     return redirect(url_for('administrator.index_adm'))
 
-# Выгружает всю базу в виде excel файла
-@panel.route('/getdata')
+
+# ----------------------------------------------------------- Отчеты -------------------------------------------------------------------------------
+
+# Выгружает всех зарегистрированных пользователей в виде excel файла
+@panel.route('/getdata', methods=['GET','POST'])
 def getdata():
     conn=sqlite3.connect('sql/volonteer.db')
     cur = conn.cursor()
-    cur.execute('''SELECT ev.id_evt, ev.event, ev.activity, ev.date, p.id_prsn, p.surname_prsn, p.name_prsn, p.patronymic_prsn, p.faculty, p.email, p.phone, p.birthday, reg.visit
+    _since = request.form.get('since')
+    _to = request.form.get('to')
+    if(_since==None and _to==None):
+        cur.execute('''SELECT ev.id_evt, ev.event, ev.activity, ev.date, ev.time_start,  ev.duration, ev.address, p.id_prsn, p.surname_prsn, p.name_prsn, p.patronymic_prsn, p.faculty, p.email, p.phone, p.birthday, p.sex, p.year_st, reg.visit, reg.role, reg.classroom
                    FROM registration AS reg 
                    JOIN person AS p ON reg.id_prsn = p.id_prsn
                    JOIN event AS ev ON reg.id_evt = ev.id_evt
-                   ORDER BY ev.id_evt''')  
+                   ORDER BY ev.id_evt DESC''')
+    else:
+        cur.execute('''SELECT ev.id_evt, ev.event, ev.activity, ev.date, ev.time_start,  ev.duration, ev.address, p.id_prsn, p.surname_prsn, p.name_prsn, p.patronymic_prsn, p.faculty, p.email, p.phone, p.birthday, p.sex, p.year_st, reg.visit, reg.role, reg.classroom
+                   FROM registration AS reg 
+                   JOIN person AS p ON reg.id_prsn = p.id_prsn
+                   JOIN event AS ev ON reg.id_evt = ev.id_evt
+                   WHERE ev.date >= '{0}' AND ev.date <= "{1}"
+                   ORDER BY ev.id_evt DESC'''.format(_since, _to))
     all = cur.fetchall()
     length = len(all)
 
@@ -371,6 +386,48 @@ def getuserregistronevent(id_evt):
 
     try:
         send = send_file('userregistronevent.xlsx', cache_timeout=0)
+    except:
+        send='Ошибка создания файла!'
+    finally:
+        conn.close()
+    return send
+
+# Выгружает посетивших конкретное событие
+@panel.route('/getvisit/<id_evt>', methods=['GET', 'POST'])
+def getvisit(id_evt):
+    if session.get('id') != 'admin':
+        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
+
+    conn = sqlite3.connect("sql/volonteer.db")
+    cur = conn.cursor()
+    cur.execute("SELECT p.id_prsn, surname_prsn, name_prsn, patronymic_prsn, faculty, email, phone, birthday, sex, year_st, classroom FROM registration AS r JOIN person AS p ON r.id_prsn=p.id_prsn WHERE r.id_evt = {} AND visit=1".format(id_evt))
+    uservisit = cur.fetchall()
+    length = len(uservisit)
+
+    # Создаем книку и лист.
+    workbook = xlsxwriter.Workbook('uservisit.xlsx')
+    worksheet = workbook.add_worksheet()
+    
+    # Заносим данные в таблицу
+    row = 0
+    col = 0
+    for h in FOR_TABLE_USERVISIT:
+        worksheet.write(row, col, h)
+        col += 1
+    row += 1
+    for item in uservisit:
+        col = 0
+        for element in item:
+            worksheet.write(row, col, element)
+            col += 1
+        row += 1
+
+    worksheet.write(row, 0, date.today().strftime("%Y-%m-%d %H:%M:%S"))
+
+    workbook.close()
+
+    try:
+        send = send_file('uservisit.xlsx', cache_timeout=0)
     except:
         send='Ошибка создания файла!'
     finally:

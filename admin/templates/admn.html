@@ -5,7 +5,13 @@
     <h2 class="m-2">Панель администратора</h2>
     <div><a href="/admin/allusers">Управление пользователями</a></div>
     <div><a href="/admin/event">Управление событиями</a></div>
-    <div><a href="/admin/getdata">Выгрузить данные</a></div>
+    <div class="pop">
+        <input type="checkbox" id="hd-1" class="hide" />
+        <label for="hd-1">Полный отчет по регистрациям ...</label>
+        <div><a href="/admin/getdata">Выгрузить список зарегистрированных на все события</a></div>
+        <div><form action="/admin/getdata" method="post">Выгрузить события за период с <input name="since" type="date" /> по <input name="to" type="date" /> <input type="submit" value="Пуск" /></form></div>
+    </div>
+    
     <div><a href="/admin/post">Опубликовать новость</a></div>
 </div>
         <footer></footer>

@@ -26,6 +26,9 @@ def index():
     return render_template('index.html', news=news)
 
 
+
+
+# Тестовая функция для проверки адресов!!!!!!!!!!
 @app.route('/xxx')
 def xxx():
     conn = sqlite3.connect('sql/volonteer.db')
@@ -172,7 +175,27 @@ def unlogin():
         del session['id']
     return redirect(url_for('index'))
 
+# Восстановление логина и пароля по почте
+@app.route('/recovery')
+def recovery():
+    return render_template('recovery.html', message = '')
 
+# Отправка почты
+@app.route('/recovery_send', methods=['GET','POST'])
+def recovery_send():
+    email = request.form.get('email')
+    conn = sqlite3.connect("sql/volonteer.db")
+    cur = conn.cursor()
+
+    # Делаем выборку всех записей из таблицы Пользователей
+    cur.execute('SELECT login, password FROM person WHERE email = "{0}"'.format(email))
+    data_reg = cur.fetchone()
+
+    if(data_reg == None):
+        return render_template('recovery.html', message='Указанный адрес в базе данных не найден')
+    else:
+        mail.send_recovery(email, data_reg[0], data_reg[1])
+        return render_template('recovery.html', message='Логин и пароль отправлены на вашу почту')
 
 # Личный кабинет волонтера - Вход - обработка формы
 @app.route('/cabinetin', methods=['GET','POST'])
@@ -332,7 +355,7 @@ def unregistration(id_evt):
     
     return redirect(url_for('cabinet', action='regevt'))
 
-# int(''.join(date.today().isoformat().split('-'))) # - получение числа из текущей даты, необходим следующий импорт: from datetime import date
+
 # ----------------------- Конец скрипта ------------------------ #
 if (__name__ == '__main__'):
     

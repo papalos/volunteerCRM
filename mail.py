@@ -52,6 +52,30 @@ def send_passw(destination:'dest_adr', log:'login', pwd:'password')->None:
 #        server.ehlo()
 #    server.login(login, password)
     server.sendmail(login, destination, msg.as_string())
+    server.quit
+
+
+def send_recovery(destination:'dest_adr', log:'login', pwd:'password')->None:
+    # читаем файл конфиг, берем из него логин и пароль для smtp
+    fp = open('conn.fig')
+    s=fp.read()
+    dic = json.loads(s)    
+    login = dic.get('login')
+    password = dic.get('password')
+    fp.close()
+
+    msg = MIMEText('Восстановление учетных данных!\n Логин: {}\n Пароль: {}'.format(log, pwd))
+    msg['Subject'] = Header('Восстановление учетных данных', 'utf-8')
+    msg['From'] = login
+    msg['To'] = destination
+
+    server = smtp.SMTP('localhost',25)
+#    server.ehlo()
+#    if server.has_extn('STARTTLS'):
+#        server.starttls()
+#        server.ehlo()
+#    server.login(login, password)
+    server.sendmail(login, destination, msg.as_string())
     server.quit()
 
 if __name__ == '__main__':
