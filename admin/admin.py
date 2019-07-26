@@ -34,7 +34,11 @@ def allusers():
     
     conn = sqlite3.connect("sql/volonteer.db")
     cur = conn.cursor()
-    cur.execute('SELECT * FROM person')
+    cur.execute('''SELECT p.*, r.num, t.num
+                   FROM person AS p 
+                   LEFT JOIN (SELECT id_prsn, COUNT(visit) AS num FROM registration GROUP BY id_prsn) AS r ON p.id_prsn = r.id_prsn
+                   LEFT JOIN (SELECT id_prsn, COUNT(visit) AS num FROM registration WHERE visit=1 GROUP BY id_prsn) AS t ON p.id_prsn = t.id_prsn
+                ''')
     persons = cur.fetchall()
     conn.close()
     return render_template('allusers.html', persons=persons)
@@ -196,17 +200,83 @@ def check():
 # Форма для новости
 @panel.route('/post')
 def post():
-    return render_template('posts.html')
+    # является ли пользователь администратором
+    if session.get('id') != 'admin':
+        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
+
+    conn=sqlite3.connect("sql/volonteer.db")
+    cur=conn.cursor()
+    cur.execute('SELECT * FROM news ORDER BY date DESC')
+    news = cur.fetchall()
+    conn.close()
+
+    return render_template('posts.html', news=news)
 
 # Публикация новости
 @panel.route('/addpost', methods=['GET','POST'])
 def addpost():
+    # является ли пользователь администратором
+    if session.get('id') != 'admin':
+        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
+
+    title = request.form.get('titlepost')
+    body = request.form.get('bodypost')
+    type = request.form.get('type')    
+
     conn=sqlite3.connect("sql/volonteer.db")
     cur=conn.cursor()
-    cur.execute('INSERT INTO news (date, title, body) VALUES ("{}","{}","{}")'.format(date.today(), request.form['titlepost'], request.form['bodypost']))
+    cur.execute('INSERT INTO news (date, title, body, type) VALUES ("{}","{}","{}", "{}")'.format(date.today(), title, body, type))
     conn.commit()
     conn.close()
-    return redirect(url_for('administrator.index_adm'))
+    return redirect(url_for('administrator.post'))
+
+# Редактирование новости интерфейс
+@panel.route('/postrecovery/<id_new>')
+def postrecovery(id_new):
+    # является ли пользователь администратором
+    if session.get('id') != 'admin':
+        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
+
+    conn=sqlite3.connect("sql/volonteer.db")
+    cur=conn.cursor()
+    cur.execute('SELECT * FROM news WHERE id="{}"'.format(id_new))
+    new = cur.fetchone()
+    conn.close()
+    return render_template('post_recovery.html', new=new)
+
+# Редактирование новости обработка формы
+@panel.route('/postrecoveryfoo', methods=['GET','POST'])
+def postrecoveryfoo():
+    # является ли пользователь администратором
+    if session.get('id') != 'admin':
+        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
+
+    id = request.form.get('id_new')
+    date = request.form.get('date')
+    title = request.form.get('titlepost')
+    body = request.form.get('bodypost')
+    type = request.form.get('type')    
+    
+    conn=sqlite3.connect("sql/volonteer.db")
+    cur=conn.cursor()
+    cur.execute('UPDATE news SET date="{0}", title="{1}", body="{2}", type="{3}" WHERE id = "{4}"'.format(date, title, body, type, id))
+    conn.commit()
+    conn.close()
+    return redirect(url_for('administrator.post'))
+
+# Удаление новости
+@panel.route('/delpost/<id_new>')
+def delpost(id_new):
+    # является ли пользователь администратором
+    if session.get('id') != 'admin':
+        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
+
+    conn=sqlite3.connect("sql/volonteer.db")
+    cur=conn.cursor()
+    cur.execute('DELETE FROM news WHERE id = "{}"'.format(id_new))
+    conn.commit()
+    conn.close()
+    return redirect(url_for('administrator.post'))
 
 
 # ----------------------------------------------------------- Отчеты -------------------------------------------------------------------------------

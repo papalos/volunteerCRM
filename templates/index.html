@@ -9,6 +9,15 @@
     {% for n in news %}
     <div class="border rounded-right m-2 p-2">
         <h3 class="titlenews">{{n[2]}}</h3>
+        <div>
+            {% if (n[4]=='school') %}
+                <img src="/static/image/for_new/sch.png" />
+            {% elif (n[4] == 'student') %}
+                <img src="/static/image/for_new/st.jpg" />
+            {% else %}
+                <img src="/static/image/for_new/com.png" />
+            {% endif %}
+        </div>
         <div class="datenews small">{{n[1]}}</div>
         <div class="bodynews">{{n[3]}}</div>
     </div>

@@ -1,0 +1,36 @@
+{%extends "basicadm.html"%}
+{%block title%}Легион-Администратор{%endblock%}
+{%block body%}
+
+<div class="container p-3 border rounded-lg">
+    
+<h2 class="m-2">Редактировать новость</h2>
+<form action="/admin/postrecoveryfoo" method="post">
+    <input type="hidden" name ="id_new" value="{{new[0]}}" />
+    <p class="row">
+        <label class="col-2">Тип: </label>
+        {% if new[4]=='student' %}
+        <label class="col-2">Обший </label><input class="col-1" type="radio" name="type" value="common" />
+        <label class="col-2">Школьная </label><input class="col-1" type="radio" name="type" value="school" />
+        <label class="col-2">Студенческая </label><input class="col-1" type="radio" name="type" value="student" checked="checked" />
+        {% elif new[4]=='school' %}
+        <label class="col-2">Обший </label><input class="col-1" type="radio" name="type" value="common" />
+        <label class="col-2">Школьная </label><input class="col-1" type="radio" name="type" value="school" checked="checked" />
+        <label class="col-2">Студенческая </label><input class="col-1" type="radio" name="type" value="student" />
+        {% else %}
+        <label class="col-2">Обший </label><input class="col-1" type="radio" name="type" value="common" checked="checked" />
+        <label class="col-2">Школьная </label><input class="col-1" type="radio" name="type" value="school" />
+        <label class="col-2">Студенческая </label><input class="col-1" type="radio" name="type" value="student" />
+        {% endif %}
+
+    </p>
+    <p class="row"><label class="col-2">Дата публикации: </label><input class="col-9" type="text" name="date" value="{{new[1]}}" /></p>
+    <p class="row"><label class="col-2">Заголовок: </label><input class="col-9" type="text" name="titlepost" value="{{new[2]}}" /></p>
+    <p class="row"><label class="col-2">Новость: </label><textarea class="col-9" name="bodypost">{{new[3]}}</textarea></p>
+    <p class="text-right"><input type="submit" value="Изменить" /></p>
+</form>
+
+</div>
+
+<footer></footer>
+{%endblock%}
