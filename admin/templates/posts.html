@@ -8,9 +8,9 @@
 <form action="{{url_for('administrator.addpost')}}" method="post">
     <p class="row">
         <label class="col-2">Тип: </label>
-        <label class="col-2">Обший </label><input class="col-1" type="radio" name="type" value="common" checked="checked" />
-        <label class="col-2">Школьная </label><input class="col-1" type="radio" name="type" value="school" />
-        <label class="col-2">Студенческая </label><input class="col-1" type="radio" name="type" value="student" />
+        <span class="col-3"><label>Обший</label> <input type="radio" name="type" value="common" checked="checked" /></span>
+        <span class="col-3"><label>Школьная</label> <input type="radio" name="type" value="school" /></span>
+        <span class="col-3"><label>Студенческая</label> <input type="radio" name="type" value="student" /></span>
     </p>
     <p class="row"><label class="col-2">Заголовок: </label><input class="col-9" type="text" name="titlepost" /></p>
     <p class="row"><label class="col-2">Новость: </label><textarea class="col-9" name="bodypost"></textarea></p>
@@ -18,13 +18,14 @@
 </form>
 
 </div>
-<div>
-    <table>
-        <tr><th>id</th><th>Тип</th><th>Заголовок</th><th>Дата публикации</th><th></th><th></th></tr>
-        {% for new in news %}
-        <tr><td>{{new[0]}}</td><td>{{new[4]}}</td><td>{{new[2]}}</td><td>{{new[1]}}</td><td><a href="/admin/postrecovery/{{new[0]}}">редактировать</a></td><td><a href="/admin/delpost/{{new[0]}}">удалить</a></td></tr>
-        {% endfor %}
-    </table>
+<div class="container p-3 border rounded-lg">
+        <table class="table table-hover">
+            <tr class="thead-dark"><th>id</th><th>Тип</th><th>Заголовок</th><th>Дата публикации</th><th></th><th></th></tr>
+            {% for new in news %}
+            <tr><td>{{new[0]}}</td><td>{{new[4]}}</td><td>{{new[2]}}</td><td>{{new[1]}}</td><td><a href="/admin/postrecovery/{{new[0]}}">редактировать</a></td><td><a href="/admin/delpost/{{new[0]}}" onclick="return conf_del()">удалить</a></td></tr>
+            {% endfor %}
+        </table>
+
 </div>
-<footer></footer>
-{%endblock%}
+    <footer></footer>
+    {%endblock%}

@@ -197,6 +197,99 @@ def check():
     conn.close()    
     return redirect(url_for('administrator.event'))
 
+# ------------------------------------- Раздел о факультетах -----------------------------------------------------------
+
+# Форма для информации о факультетах
+@panel.route('/faculty')
+def faculty():
+    # является ли пользователь администратором
+    if session.get('id') != 'admin':
+        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
+
+    conn=sqlite3.connect("sql/volonteer.db")
+    cur=conn.cursor()
+    cur.execute('SELECT * FROM faculty ORDER BY full_name')
+    faculty = cur.fetchall()
+    conn.close()
+
+    return render_template('faculty.html', faculty=faculty)
+
+# Добавления факультета
+@panel.route('/facultyadd', methods = ['GET', 'POST'])
+def facultyadd():
+    # является ли пользователь администратором
+    if session.get('id') != 'admin':
+        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
+
+    full_name = request.form.get('full_name')
+    short_name = request.form.get('short_name')
+    leader_name = request.form.get('leader_name')
+    phone = request.form.get('phone')
+    email = request.form.get('email')
+
+
+    conn=sqlite3.connect("sql/volonteer.db")
+    cur=conn.cursor()
+    cur.execute('INSERT INTO faculty (full_name, short_name, leader_name, phone, email) VALUES ("{0}", "{1}", "{2}", "{3}", "{4}")'.format(full_name, short_name, leader_name, phone, email))
+    conn.commit()
+    conn.close()
+
+    return redirect(url_for('administrator.faculty'))
+
+# Удаление факультета
+@panel.route('/facultydel/<f_id>')
+def facultydel(f_id):
+    # является ли пользователь администратором
+    if session.get('id') != 'admin':
+        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
+
+    conn=sqlite3.connect("sql/volonteer.db")
+    cur=conn.cursor()
+    cur.execute('DELETE FROM faculty WHERE f_id="{}"'.format(f_id))
+    conn.commit()
+    conn.close()
+
+    return redirect(url_for('administrator.faculty'))
+
+# Форма редактирования факультета
+@panel.route('/facultyedit/<f_id>')
+def facultyedit(f_id):
+    # является ли пользователь администратором
+    if session.get('id') != 'admin':
+        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
+
+    conn=sqlite3.connect("sql/volonteer.db")
+    cur=conn.cursor()
+    cur.execute('SELECT * FROM faculty WHERE f_id="{}"'.format(f_id))
+    fac = cur.fetchone()
+    conn.close()
+
+    return render_template('faculty_edit.html', fac = fac)
+
+# Функция редактирования факультета
+@panel.route('/facultyeditfoo', methods = ['GET', 'POST'])
+def facultyeditfoo():
+    # является ли пользователь администратором
+    if session.get('id') != 'admin':
+        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
+    f_id = request.form.get('f_id')
+    full_name = request.form.get('full_name')
+    short_name = request.form.get('short_name')
+    leader_name = request.form.get('leader_name')
+    phone = request.form.get('phone')
+    email = request.form.get('email')
+
+
+    conn=sqlite3.connect("sql/volonteer.db")
+    cur=conn.cursor()
+    cur.execute('UPDATE faculty SET full_name = "{0}", short_name = "{1}", leader_name = "{2}", phone = "{3}", email = "{4}" WHERE f_id = "{5}"'.format(full_name, short_name, leader_name, phone, email, f_id))
+    conn.commit()
+    conn.close()
+
+    return redirect(url_for('administrator.faculty'))
+
+# --------------- Блок новостей -------------------------------------------------------------------------
+
 # Форма для новости
 @panel.route('/post')
 def post():

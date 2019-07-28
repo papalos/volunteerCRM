@@ -30,4 +30,20 @@
     font-size: 200%;	
 	color: #ee7501;
 }
+
+.hide {
+    display: none;
+}
+
+    .hide + label {
+        color: blue;
+    }
+
+        .hide + label ~ div {
+            display: none;
+        }
+
+    .hide:checked + label ~ div {
+        display: block;
+    }
    

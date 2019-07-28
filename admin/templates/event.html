@@ -10,7 +10,7 @@
 	</thead>
 	{%for evt in events%}
 	<tr>
-	<td>{{evt[1]}}</td><td>{{evt[2]}}</td><td>{{evt[3]}}</td><td><a href="/admin/deletevt/{{evt[0]}}">удалить<a></td><td><a href="/admin/stat/{{evt[0]}}">регистрации<a></td><td><a href="/admin/visit/{{evt[0]}}">посещения<a></td>
+	<td>{{evt[1]}}</td><td>{{evt[2]}}</td><td>{{evt[3]}}</td><td><a href="/admin/deletevt/{{evt[0]}}" onclick="return conf_del()">удалить<a></td><td><a href="/admin/stat/{{evt[0]}}">регистрации<a></td><td><a href="/admin/visit/{{evt[0]}}">посещения<a></td>
 	</tr>
 	{%endfor%}
 </table>

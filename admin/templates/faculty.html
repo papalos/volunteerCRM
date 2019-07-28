@@ -1,0 +1,28 @@
+{%extends "basicadm.html"%}
+{%block title%}Легион-Администратор{%endblock%}
+{%block body%}
+
+<div class="container p-3 border rounded-lg">
+    
+<h2 class="m-2">Управление факультетами</h2>
+<form action="/admin/facultyadd" method="post">
+    <p class="row"><label class="col-2">Полное наименование: </label><input class="col-9" type="text" name="full_name" /></p>
+    <p class="row"><label class="col-2">Краткое наименование: </label><input class="col-9" type="text" name="short_name" /></p>
+    <p class="row"><label class="col-2">Руководитель: </label><input class="col-9" type="text" name="leader_name" /></p>
+    <p class="row"><label class="col-2">Телефон: </label><input class="col-9" type="text" name="phone" /></p>
+    <p class="row"><label class="col-2">E-mail: </label><input class="col-9" type="text" name="email" /></p>
+    <p class="text-right"><input type="submit" value="Добавить" /></p>
+</form>
+
+</div>
+<div class="container p-3 border rounded-lg">
+    <table class="table table-hover">
+        <tr class="thead-dark"><th>Полное наименование</th><th>Краткое наименование</th><th>Руководитель</th><th>Телефон</th><th>Почта</th><th></th><th></th></tr>
+        {% for f in faculty %}
+        <tr><td>{{f[1]}}</td><td>{{f[2]}}</td><td>{{f[3]}}</td><td>{{f[4]}}</td><td>{{f[5]}}</td><td><a href="/admin/facultyedit/{{f[0]}}">редактировать</a></td><td><a href="/admin/facultydel/{{f[0]}}" onclick="return conf_del()">удалить</a></td></tr>
+        {% endfor %}
+    </table>
+
+</div>
+    <footer></footer>
+    {%endblock%}
