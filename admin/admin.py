@@ -54,6 +54,7 @@ def deluser():
     cur = conn.cursor()
     del_num = request.args.get('idu')
     cur.execute('DELETE FROM person WHERE id_prsn = {}'.format(del_num))
+    cur.execute('DELETE FROM registration WHERE id_prsn = {}'.format(del_num))
     conn.commit()
     conn.close()
     return redirect(url_for('administrator.allusers'))
@@ -121,7 +122,8 @@ def deletevt(id):
     # Соединение с БД
     conn = sqlite3.connect("sql/volonteer.db")
     cur = conn.cursor()    
-    cur.execute("DELETE FROM event WHERE id_evt = " + id)
+    cur.execute("DELETE FROM event WHERE id_evt = '{}'".format(id))
+    cur.execute("DELETE FROM registration WHERE id_evt = '{}'".format(id))
     conn.commit()
     conn.close()
     
@@ -191,7 +193,7 @@ def check():
     for key in _form:
         if _form[key] == 'on':
             # Меняем нолик на единицу в таблице регистраций, устанавливая посещение волонтером с id = key мероприятия с id = event
-            cur.execute("UPDATE registration SET visit = 1, classroom={2} WHERE id_prsn = {0} AND id_evt={1}".format(key, event, _form.get('classroom_for_'+key)))
+            cur.execute("UPDATE registration SET visit = 1, classroom='{2}' WHERE id_prsn = {0} AND id_evt={1}".format(key, event, _form.get('classroom_for_'+key)))
         conn.commit()
 
     conn.close()    
@@ -596,3 +598,11 @@ def getvisit(id_evt):
     finally:
         conn.close()
     return send
+
+
+# Выгружает файл базы данных
+@panel.route('/backupdb')
+def backupdb():
+    if session.get('id') != 'admin':
+        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
+    return send_file('sql/volonteer.db', cache_timeout=0)

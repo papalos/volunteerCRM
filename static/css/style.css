@@ -31,16 +31,21 @@
 	color: #ee7501;
 }
 
+
+/* --------------------- сворачивающиеся div --------------------------*/
+
 .hide {
     display: none;
 }
 
     .hide + label {
         color: blue;
+        margin: 0;
     }
 
         .hide + label ~ div {
             display: none;
+            margin-left: 20px;
         }
 
     .hide:checked + label ~ div {

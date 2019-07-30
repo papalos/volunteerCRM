@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session     # инструменты Flask
+from flask import Flask, render_template, request, redirect, url_for, session, send_file     # инструменты Flask
 import sqlite3                                                                               # для работы с БД SQLite
 from datetime import date, timedelta                                                         # класс для работы с датой
 import random                                                                                # для генерации случайных чисел
@@ -354,6 +354,7 @@ def unregistration(id_evt):
     conn.close()
     
     return redirect(url_for('cabinet', action='regevt'))
+
 
 
 # ----------------------- Конец скрипта ------------------------ #
