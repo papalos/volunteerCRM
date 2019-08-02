@@ -1,4 +1,4 @@
-{%extends "basic.html"%}
+{%extends "basicus.html"%}
 {%block title%}Легион-Главная{%endblock%}
 {%block body%}
 <div class="container p-3 border rounded-lg">
@@ -7,9 +7,9 @@
     <div class="name bg-dark text-light p-2">Здравствуйте, {{volonteer[1]}} {{volonteer[2]}} {{volonteer[3]}}</div>
 
     <div class="rule_menu m-2">
-        <a href="/cabinet/nextevt">Предстоящие события доступные для регистрации</a> | 
-        <a href="/cabinet/regevt">Предстоящие события на которые зарегистрирован</a> | 
-        <a href="/cabinet/lastevt">События в которых принял участие</a>
+        <a href="/us/cabinet/nextevt">Предстоящие события доступные для регистрации</a> | 
+        <a href="/us/cabinet/regevt">Предстоящие события на которые зарегистрирован</a> | 
+        <a href="/us/cabinet/lastevt">События в которых принял участие</a>
     </div>
     <div class="content">
         {{content|safe}}

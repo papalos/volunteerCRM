@@ -5,6 +5,7 @@ import random                                                                   
 import mail                                                                                  # отправка сообщения для подтверждения регистрации
 import checker                                                                               # проверки
 from admin.admin import panel
+from user.user import cabin
 
 
 app = Flask(__name__)
@@ -12,6 +13,7 @@ app = Flask(__name__)
 app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
 
 app.register_blueprint(panel, url_prefix='/admin')
+app.register_blueprint(cabin, url_prefix='/us')
 
 # ---------------- начало скрипта ----------------- #
 
@@ -39,37 +41,7 @@ def xxx():
     return str(request.args['mail'] in mail)
 
 
-# II Панель администратора
-# Управление пользователями
-# @app.route('/admn') # def admn(): # - Перенесена в blueprint admin
-
-
-# Панель администратора (пользователь) - все пользователи (выводит всех пользователей из постоянной таблицы person
-# @app.route('/allusers') # def allusers(): # - Перенесена в blueprint admin
-
-# Панель администратора (пользователь) - удаляет пользователя из постоянной таблицы person
-# @app.route('/deluser') # def deluser(): # - Перенесена в blueprint admin
-
-
-# Панель администратора (события) - выводит список всех событий
-# @app.route('/event') # def event(): # - Перенесена в blueprint admin
-
-
-# Панель администратора (события) - выполняет добавление нового события и редирект к списку всех событий
-# @app.route('/eventadd', methods=['GET', 'POST']) # def eventadd(): # - Перенесена в blueprint admin
-
-
-# Панель администратора (события) - удаление события и редирект к списку событий
-# @app.route('/deletevt/<id>') # def deletevt(id): # - Перенесена в blueprint admin
-
-
-# Панель администратора (события) - статистика регистраций на событие, списки волонтеров зарегистрировавшихся на конкретное событие
-# @app.route('/stat/<id_evt>') # def stat(id_evt): # - Перенесена в blueprint admin
-
-
-# Панель администратора (события) - отметить волонтера на событии
-# @app.route('/check', methods=['GET', 'POST']) # def check():
-    
+# II Панель администратора - Перенесена в blueprint admin
 
 # III Регистрация личного кабинета - регистрационная форма
 @app.route('/person')
@@ -166,7 +138,7 @@ def login():
         if session.get('id')=='admin':
             return redirect(url_for('administrator.index_adm'))
         else:
-            return redirect(url_for('cabinet',action='1'))
+            return redirect(url_for('user.cabinet',action='1'))
     return render_template('login.html')
 
 @app.route('/unlogin')
@@ -228,7 +200,7 @@ def cabinetin():
             session['id']=p[0]
             conn.close()
             # Переходим на страницу отображения ЛК
-            return redirect(url_for('cabinet', action='nextevt'))
+            return redirect(url_for('user.cabinet', action='nextevt'))
     
     conn.close()
 
@@ -236,6 +208,8 @@ def cabinetin():
     return '<span>Увы, но вы не зарегистрированы!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
 
 
+#------------- Перенесен в блупринт user
+'''
 # Личный кабинет волонтера - Внешний вид
 @app.route('/cabinet/<action>')
 def cabinet(action):
@@ -278,7 +252,7 @@ def cabinet(action):
             ls = int(''.join(ls))
             # получаем и преобразуем в число текущую дату и сравниваем его с датой события
             if (ls>int(''.join(date.today().isoformat().split('-')))):
-                delreg = '<a href="/unregistration/{}">Отменить регистрацию</a>'.format(row[0])
+                delreg = '<a href="/us/unregistration/{}">Отменить регистрацию</a>'.format(row[0])
                 # формируем строки таблицы только из тех событий даты которых больше текущей даты.
                 content += '<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td><td>{4}</td></tr>'.format( row[1],row[2],row[3],row[4], delreg)
         content += '</tbody></table>'
@@ -298,7 +272,9 @@ def cabinet(action):
     # Закрываем БД и выводим шаблон ЛК передавая ФИО пользователя и контент для отображения на странице
     conn.close()
     return render_template('cabinet.html', volonteer=volonteer, content=content)
+'''
 
+'''
 # Личный кабинет - регистрация пользователя на событие
 @app.route('/registration_view/<id_evt>', methods=['GET', 'POST'])
 def registration_view(id_evt):
@@ -325,7 +301,9 @@ def registration_view(id_evt):
     conn.close()
 
     return  render_template('registration_view.html', volonteer=volonteer, event=event, num_staff = num_staff, num_classroom = num_classroom)
+'''
 
+'''
 # Личный кабинет - регистрация пользователя на событие
 @app.route('/registration', methods=['GET', 'POST'])
 def registration():
@@ -341,6 +319,8 @@ def registration():
     
     return redirect(url_for('cabinet', action='nextevt'))
 
+'''
+'''
 # Личный кабинет - Отмена регистрации пользователя на событие
 @app.route('/unregistration/<id_evt>', methods=['GET', 'POST'])
 def unregistration(id_evt):
@@ -354,7 +334,7 @@ def unregistration(id_evt):
     conn.close()
     
     return redirect(url_for('cabinet', action='regevt'))
-
+'''
 
 
 # ----------------------- Конец скрипта ------------------------ #
