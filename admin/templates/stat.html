@@ -7,8 +7,8 @@
 
 <div class="text-danger">Количество зарегистрировавшихся в Штаб: <strong>{{x_staff}}</strong>; необходимое количество: {{event[7]}}/{{event[8]}}</div>
 <div class="text-danger">Количество зарегистрировавшихся в Аудитории: <strong>{{x_classroom}}</strong>; необходимое количество: {{event[9]}}/{{event[10]}}</div>
-    <a href="/admin/getuserregistronevent/{{id_evt}}">Выгрузить список зарегистрировавшихся</a>
-<form action="/admin/check" method="post">
+    <a href="{{url_for('administrator.getuserregistronevent', id_evt=id_evt)}}">Выгрузить список зарегистрировавшихся</a>
+<form action="{{url_for('administrator.check')}}" method="post">
 <input type="hidden" name="event" value="{{event[0]}}">
 <table class="table table-striped m-auto">
 	<thead>

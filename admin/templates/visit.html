@@ -6,7 +6,7 @@
 <h2 class="m-2">Статистика посещения {{event[1]}} - {{event[2]}}</h2>
 
 <span class="text-danger">Количество присутствующих на событии: {{count}}</span>
-<a href="/admin/getvisit/{{id_evt}}">Выгрузить список посетивших событие</a>
+<a href="{{url_for('administrator.getvisit', id_evt=id_evt)}}">Выгрузить список посетивших событие</a>
 <table class="table table-striped m-auto">
 	<thead>
         <th>id</th><th>Фамилия</th><th>Имя</th><th>Отчество</th><th>Факультет</th><th>e-mail</th><th>Телефон</th><th>Дата рождения</th><th>Пол</th><th>Курс</th><th>Аудитория</th>

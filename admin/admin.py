@@ -182,8 +182,7 @@ def check():
     # является ли пользователь администратором
     if session.get('id') != 'admin':
         return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
-    
-
+   
     # Соединение с БД
     conn = sqlite3.connect("sql/volonteer.db")
     cur = conn.cursor()

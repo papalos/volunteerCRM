@@ -5,7 +5,7 @@
 <div class="container p-3 border rounded-lg">
     
 <h2 class="m-2">Редактировать новость</h2>
-<form action="/admin/postrecoveryfoo" method="post">
+<form action="{{url_for('administrator.postrecoveryfoo')}}" method="post">
     <input type="hidden" name ="id_new" value="{{new[0]}}" />
     <p class="row">
         <label class="col-2">Тип: </label>
@@ -27,7 +27,7 @@
     <p class="row"><label class="col-2">Дата публикации: </label><input class="col-9" type="text" name="date" value="{{new[1]}}" /></p>
     <p class="row"><label class="col-2">Заголовок: </label><input class="col-9" type="text" name="titlepost" value="{{new[2]}}" /></p>
     <p class="row"><label class="col-2">Новость: </label><textarea class="col-9" name="bodypost">{{new[3]}}</textarea></p>
-    <p class="text-right"><input type="submit" value="Редактировать" /> <button onclick="document.location.href = '/admin/post'">Отменить</button></p>
+    <p class="text-right"><input type="submit" value="Редактировать" /> <input type="submit" onclick="document.location.href = '{{url_for('administrator.post')}}'" value="Отменить" /></p>
 </form>
 
 </div>

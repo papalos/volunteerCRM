@@ -5,7 +5,7 @@
 <div class="container p-3 border rounded-lg">
     
 <h2 class="m-2">Управление факультетами</h2>
-<form action="/admin/facultyadd" method="post">
+<form action="{{url_for('administrator.facultyadd')}}" method="post">
     <p class="row"><label class="col-2">Полное наименование: </label><input class="col-9" type="text" name="full_name" /></p>
     <p class="row"><label class="col-2">Краткое наименование: </label><input class="col-9" type="text" name="short_name" /></p>
     <p class="row"><label class="col-2">Руководитель: </label><input class="col-9" type="text" name="leader_name" /></p>
@@ -19,7 +19,7 @@
     <table class="table table-hover">
         <tr class="thead-dark"><th>Полное наименование</th><th>Краткое наименование</th><th>Руководитель</th><th>Телефон</th><th>Почта</th><th></th><th></th></tr>
         {% for f in faculty %}
-        <tr><td>{{f[1]}}</td><td>{{f[2]}}</td><td>{{f[3]}}</td><td>{{f[4]}}</td><td>{{f[5]}}</td><td><a href="/admin/facultyedit/{{f[0]}}">редактировать</a></td><td><a href="/admin/facultydel/{{f[0]}}" onclick="return conf_del()">удалить</a></td></tr>
+        <tr><td>{{f[1]}}</td><td>{{f[2]}}</td><td>{{f[3]}}</td><td>{{f[4]}}</td><td>{{f[5]}}</td><td><a href="{{url_for('administrator.facultyedit', f_id=f[0])}}">редактировать</a></td><td><a href="{{url_for('administrator.facultydel', f_id=f[0])}}" onclick="return conf_del()">удалить</a></td></tr>
         {% endfor %}
     </table>
 
