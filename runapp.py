@@ -27,10 +27,20 @@ def index():
     news = cur.fetchall()
     return render_template('index.html', news=news)
 
+# О нас
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
+# Контакты
+@app.route('/contact')
+def contact():
+    return render_template('contact.html')
 
 
 
-# Функция для проверки адресов в бд
+
+# Функция для проверки адресов в бд через js
 @app.route('/xxx')
 def xxx():
     conn = sqlite3.connect('sql/volonteer.db')
@@ -105,7 +115,7 @@ def personview():
     host = request.host_url.split(':')                    # парсим адрес хоста
     link=host[0]+':'+host[1]+'confirm/'+rand              # собираем ссылку из хоста, страницы проверки и случайного числа сгенерированного для пользователя
     
-    mail.to_volunteer(email, link)                           # функция отправки сообщения из файла mail.py
+    mail.to_volunteer(email, link, name)                           # функция отправки сообщения из файла mail.py
     return '<span>На ваш почтовый адрес отправлена ссылка для подтверждения регистрации</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
 
 # Регистрация личного кабинета - подтверждение регистрации по ссылке с почты
