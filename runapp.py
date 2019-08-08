@@ -43,12 +43,17 @@ def contact():
 # Функция для проверки адресов в бд через js
 @app.route('/xxx')
 def xxx():
+    check_mail = request.args['mail']
     conn = sqlite3.connect('sql/volonteer.db')
-    cur=conn.cursor()
-    cur.execute('SELECT email FROM person')
-    mails = cur.fetchall()
-    mail = [i[0] for i in mails]
-    return str(request.args['mail'] in mail)
+    curI=conn.cursor()
+    curII = conn.cursor()
+    curI.execute('SELECT email FROM person')
+    curII.execute('SELECT email FROM temp_user')
+    mailsI = curI.fetchall()
+    mailsII = curII.fetchall()
+    mailI = [i[0] for i in mailsI]
+    mailII = [i[0] for i in mailsII]
+    return str(check_mail in mailII or check_mail in mailI)
 
 
 # II Панель администратора - Перенесена в blueprint admin
