@@ -12,72 +12,73 @@
         <tr>
             <td>Событие</td>
             <td>
-                <input type="text" name="event" />
+                <input type="text" name="event" required />
             </td>
         </tr>
         <tr>
             <td>Активность/Предмет</td>
             <td>
-                <input type="text" name="activity" />
+                <input type="text" name="activity" required />
             </td>
         </tr>
         <tr>
             <td>Дата</td>
             <td>
-                <input type="date" name="date" />
+                <input type="date" name="date" required />
             </td>
         </tr>
         <tr>
             <td>Время прихода</td>
             <td>
-                <input type="text" name="time_in" />
+                <input type="text" name="time_in" placeholder="08:30" pattern="^[0-9]{2}:[0-9]{2}$" required />
             </td>
         </tr>
         <tr>
             <td>Время начала состязания</td>
             <td>
-                <input type="text" name="time_start" />
+                <input type="text" name="time_start" placeholder="11:00" pattern="^[0-9]{2}:[0-9]{2}$" required />
             </td>
         </tr>
         <tr>
-            <td>Продолжительность</td>
+            <td>Продолжительность (в мин.)</td>
             <td>
-                <input type="text" name="duration" />
+                <input type="text" name="duration" placeholder="120" pattern="^[0-9]{2,3}$" required />
             </td>
         </tr>        
         <tr>
             <td>Минимальное количество в штаб</td>
             <td>
-                <input type="text" name="staff_min" />
+                <input type="text" name="staff_min" placeholder="6" pattern="^[0-9]{1,3}$" required />
             </td>
         </tr>
         <tr>
             <td>Максимальное количество в штаб</td>
             <td>
-                <input type="text" name="staff_max" />
+                <input type="text" name="staff_max" placeholder="12" pattern="^[0-9]{1,3}$" required />
             </td>
         </tr>
         <tr>
             <td>Минимальное количество в аудиторию</td>
             <td>
-                <input type="text" name="classroom_min" />
+                <input type="text" name="classroom_min" placeholder="43" pattern="^[0-9]{1,3}$" required />
             </td>
         </tr>
         <tr>
             <td>Максимальное количество в аудиторию</td>
             <td>
-                <input type="text" name="classroom_max" />
+                <input type="text" name="classroom_max" placeholder="60" pattern="^[0-9]{1,3}$" required />
             </td>
         </tr>
         <tr>
             <td>Адресс проведения</td>
             <td>
-                <input type="text" name="address" />
+                <input type="text" name="address" placeholder="Мясницкая, 11" required />
             </td>
         </tr>
         <tr colspan="2">
             <td>
                 <input type="submit" value="Создать" />
+                <input type="button" onclick="document.location.href = '{{url_for('administrator.event')}}'" value="Отменить" />
             </td>
         </tr>
     </table>

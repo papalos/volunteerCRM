@@ -74,7 +74,7 @@ def cabinet(action):
     conn.close()
     return render_template('cabinet.html', volonteer=volonteer, content=content)
 
-# Личный кабинет - регистрация пользователя на событие
+# Личный кабинет - регистрация пользователя на событие внешний вид
 @cabin.route('/registration_view/<id_evt>', methods=['GET', 'POST'])
 def registration_view(id_evt):
     if(session.get('id') is None):

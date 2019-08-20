@@ -143,7 +143,7 @@ def confirm(hash):
     conn.close()
 
     # отправить логин и пароль на почтовый адрес
-    mail.send_passw(row[5], row[8], row[9])    
+    mail.send_passw(row[5], row[8], row[9], row[1])    
     return redirect(url_for('index'))
 
 # IV Авторизация - Вход в личный кабинет волонтера - Форма авторизации
@@ -167,7 +167,7 @@ def unlogin():
 def recovery():
     return render_template('recovery.html', message = '')
 
-# Отправка почты
+# Восстановления пароля отправка почты
 @app.route('/recovery_send', methods=['GET','POST'])
 def recovery_send():
     email = request.form.get('email')
