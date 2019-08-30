@@ -2,8 +2,8 @@ from flask import Blueprint, Flask, render_template, request, redirect, url_for,
 import sqlite3                                                                    # для работы с БД SQLite
 from datetime import date, timedelta                                              # класс для работы с датой
 import random                                                                     # для генерации случайных чисел
-# import mail                                                                       # отправка сообщения для подтверждения регистрации
-# import checker                                                                    # проверки
+# import mail                                                                     # отправка сообщения для подтверждения регистрации
+# import checker                                                                  # проверки
 import xlsxwriter                                                                 # создание документа .xmlx
 
 
@@ -230,6 +230,46 @@ def facultyadd():
 
 
     conn=sqlite3.connect("sql/volonteer.db")
+    # Проверка создаваемого факультета на уникальность
+    cur0=conn.cursor()
+    cur0.execute('SELECT full_name, short_name FROM faculty')
+    listFaculty = cur0.fetchall()
+    for i in listFaculty:
+        if full_name in i or short_name in i:
+            return '''<html>
+                        <head>
+                        <META http-equiv="content-type" content="text/html; charset=windows-1251">
+                        <title></title>
+                        </head>
+                        <body>
+                        <script type="text/javascript">
+                        var sec=10;
+                            function Sec()
+                            {
+                            document.getElementById("sec").innerHTML=sec;
+                            sec--;
+                            if(sec==1)
+                            {
+   	                            location.replace("/admin/faculty")
+                            }
+                            setTimeout('Sec()',1000);
+                            }
+                        </script>
+                        <noscript>
+                        <meta http-equiv="refresh" content="20; /admin/faculty">
+                        </noscript>
+                        Найдено совпадение с записью в базе данных. <br />
+                        Не создавайте похожих записей. <br />
+                        Воспользуйтесь функцией редактирования записи. <br />
+                        Возврат к предыдущей страницы произойдет через: 
+                            <span style="color:red;font-weight: bold;" id="sec" name="sec">10</span> сек. <br />
+                            Если автоматический переход не произошел воспользуйтесь 
+                            <a href="/admin/faculty">данной ссылкой</a>
+                        <script type="text/javascript">
+                            Sec();
+                        </script>
+                        </body>
+                        </html>'''
     cur=conn.cursor()
     cur.execute('INSERT INTO faculty (full_name, short_name, leader_name, phone, email) VALUES ("{0}", "{1}", "{2}", "{3}", "{4}")'.format(full_name, short_name, leader_name, phone, email))
     conn.commit()
@@ -282,6 +322,7 @@ def facultyeditfoo():
 
 
     conn=sqlite3.connect("sql/volonteer.db")
+
     cur=conn.cursor()
     cur.execute('UPDATE faculty SET full_name = "{0}", short_name = "{1}", leader_name = "{2}", phone = "{3}", email = "{4}" WHERE f_id = "{5}"'.format(full_name, short_name, leader_name, phone, email, f_id))
     conn.commit()
