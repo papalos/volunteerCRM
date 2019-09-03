@@ -25,6 +25,7 @@ def cabinet(action):
     volonteer = cur.fetchone()
 
     if (action=='lastevt'):# отображается когда запрашиваются события которые посетил пользователь
+        bold=3
         # Получаем пересекающиеся данные из таблиц События и Регистрации
         # и выбираем из них только те, которые посетил пользователь с id записанным в сессию
         cur = cur.execute('SELECT event.id_evt, event.event, event.activity, event.date FROM event JOIN registration ON event.id_evt=registration.id_evt WHERE registration.id_prsn={} AND registration.visit =1'.format(session['id']))
@@ -40,6 +41,7 @@ def cabinet(action):
             content += '<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td></tr>'.format( row[1],row[2],row[3],code)
         content += '</tbody></table>'
     elif (action=='regevt'): # отображается когда запрашивается события на которые зарегистрирован пользователь
+        bold=2
         # Получаем пересекающиеся данные из таблиц События и Регистрации
         # и выбираем из них только те, на которые зарегистрирован пользователь с id записанным в сессию
         cur = cur.execute('SELECT event.id_evt, event.event, event.activity, event.date, registration.role FROM event JOIN registration ON event.id_evt=registration.id_evt WHERE registration.id_prsn={}'.format(session['id']))
@@ -53,11 +55,12 @@ def cabinet(action):
             ls = int(''.join(ls))
             # получаем и преобразуем в число текущую дату и сравниваем его с датой события
             if (ls>int(''.join(date.today().isoformat().split('-')))):
-                delreg = '<a href="/us/unregistration/{}">Отменить регистрацию</a>'.format(row[0])
+                delreg = '<a href="/us/unregistration/{}" onclick="return conf_cancel()">Отменить регистрацию</a>'.format(row[0])
                 # формируем строки таблицы только из тех событий даты которых больше текущей даты.
                 content += '<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td><td>{4}</td></tr>'.format( row[1],row[2],row[3],row[4], delreg)
         content += '</tbody></table>'
     else:    # Отображается когда показываются предстоящие события на которые можно зарегистрироваться
+        bold=1
         # Делаем выборку событий в которх зарегистрировался пользователь с id сохранным в сессии из таблицы Регистриция
         # Из таблицы События выбираем события с id_evt  не входящим в первую выборку, т.е. те на которые данный пользователь еще не регистрировался
         cur = cur.execute('SELECT * FROM event WHERE id_evt NOT IN (SELECT id_evt FROM registration WHERE id_prsn ={})'.format(session['id']))
@@ -72,7 +75,7 @@ def cabinet(action):
         content += '</tbody></table>'
     # Закрываем БД и выводим шаблон ЛК передавая ФИО пользователя и контент для отображения на странице
     conn.close()
-    return render_template('cabinet.html', volonteer=volonteer, content=content)
+    return render_template('cabinet.html', volonteer=volonteer, content=content, bold=bold)
 
 # Личный кабинет - регистрация пользователя на событие внешний вид
 @cabin.route('/registration_view/<id_evt>', methods=['GET', 'POST'])
