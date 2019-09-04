@@ -1,20 +1,29 @@
 {%extends "basicadm.html"%}
-{%block title%}Легион-События{%endblock%}
+{%block title%}Волонтеры НИУ ВШЭ - События{%endblock%}
 {%block body%}
 <div class="m-3 p-3 border rounded-lg">
-<a class="m-2" href="{{url_for('administrator.event_add_html')}}">Создать событие</a>
-<h2 class="m-2">Все события:</h2><div><form action="{{url_for('administrator.getsomeevents')}}" method="post">Выгрузить события за период с <input name="since" type="date" /> по <input name="to" type="date" /> <input type="submit" value="Пуск" /></form></div>
+    <a class="m-2" href="{{url_for('administrator.event_add_html')}}">Создать событие</a>
+    <h2 class="m-2">Все события:</h2><div><form action="{{url_for('administrator.getsomeevents')}}" method="post">Выгрузить события за период с <input name="since" type="date" /> по <input name="to" type="date" /> <input type="submit" value="Пуск" /></form></div>
 
-<table class="table table-striped m-auto">
-	<thead>
-	<th>Событие</th><th>Активность/Предмет</th><th>Дата</th><th>Редактировать</th><th colspan="2" align="center">Статистика</th>
-	</thead>
-	{%for evt in events%}
-	<tr>
-	<td>{{evt[1]}}</td><td>{{evt[2]}}</td><td>{{evt[3]}}</td><td><a href="{{url_for('administrator.deletevt', id=evt[0])}}" onclick="return conf_del()">удалить<a></td><td><a href="{{url_for('administrator.stat', id_evt=evt[0])}}">регистрации<a></td><td><a href="{{url_for('administrator.visit', id_evt=evt[0])}}">посещения<a></td>
-	</tr>
-	{%endfor%}
-</table>
+    <table class="table table-striped m-auto">
+        <thead>
+        <th>Событие</th>
+        <th>Активность/Предмет</th>
+        <th>Дата</th>
+        <th>Редактировать</th>
+        <th colspan="2" align="center">Статистика</th>
+        </thead>
+        {%for evt in events%}
+        <tr>
+            <td>{{evt[1]}}</td>
+            <td>{{evt[2]}}</td>
+            <td>{{evt[3]}}</td>
+            <td><a href="{{url_for('administrator.deletevt', id=evt[0])}}" onclick="return conf_del()">удалить<a></td>
+            <td><a href="{{url_for('administrator.stat', id_evt=evt[0])}}">регистрации<a></td>
+            <td><a href="{{url_for('administrator.visit', id_evt=evt[0])}}">посещения<a></td>
+        </tr>
+        {%endfor%}
+    </table>
 </div>
 </div>
 

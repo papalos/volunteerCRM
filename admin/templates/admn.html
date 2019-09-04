@@ -1,5 +1,5 @@
 {%extends "basicadm.html"%}
-{%block title%}Легион-Администратор{%endblock%}
+{%block title%}Волонтеры НИУ ВШЭ - Администратор{%endblock%}
 {%block body%}
 <div class="container p-3 border rounded-lg">
     <h2 class="m-2">Панель администратора</h2>
@@ -16,5 +16,5 @@
     <a href="{{url_for('administrator.post')}}" style="margin:15px"><figure style="display:inline-block"><img src="{{url_for('static', filename='image/for_admin/news.png')}}" /><figcaption>Опубликовать новость</figcaption></figure></a>
     <a href="{{url_for('administrator.backupdb')}}" style="margin:15px"><figure style="display:inline-block"><img src="{{url_for('static', filename='image/for_admin/db.png')}}" /><figcaption>Бэкап Базы Данных</figcaption></figure></a>
 </div>
-        <footer></footer>
+<footer></footer>
         {%endblock%}

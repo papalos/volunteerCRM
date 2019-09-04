@@ -1,5 +1,5 @@
 {%extends "basicus.html"%}
-{%block title%}Легион-Главная{%endblock%}
+{%block title%}Волонтеры НИУ ВШЭ - Личный кабинет{%endblock%}
 {%block body%}
 <div class="container p-3 border rounded-lg">
     <h3 class="mb-4">Личный кабинет</h3>
@@ -7,8 +7,8 @@
     <div class="name bg-dark text-light p-2">Здравствуйте, {{volonteer[1]}} {{volonteer[2]}} {{volonteer[3]}}</div>
 
     <div class="rule_menu m-2">
-        <a href="/us/cabinet/nextevt" {% if bold==1 %} style="font-weight: bold" {% endif %}>Предстоящие события</a> | 
-        <a href="/us/cabinet/regevt" {% if bold==2 %} style="font-weight: bold" {% endif %}>Мои предстоящие события</a> | 
+        <a href="/us/cabinet/nextevt" {% if bold==1 %} style="font-weight: bold" {% endif %}>Предстоящие события</a> |
+        <a href="/us/cabinet/regevt" {% if bold==2 %} style="font-weight: bold" {% endif %}>Мои предстоящие события</a> |
         <a href="/us/cabinet/lastevt" {% if bold==3 %} style="font-weight: bold" {% endif %}>События с моим участием</a>
     </div>
     <div class="content">

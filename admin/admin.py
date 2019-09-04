@@ -12,6 +12,38 @@ FOR_TABLE_ALLUSERS = ('id', 'Фамилия', 'Имя', 'Отчество', 'Ф�
 FOR_TABLE_SOMEEVENTS = ('id', 'Событие', 'Активность', 'Дата проведения', 'Время прихода', 'Время начала', 'Продолжительность', 'Штаб_min', 'Штаб_max', 'Аудитория_min', 'Аудитория_max', 'Адресс')
 FOR_TABLE_USERREGISTERONEVENT = ('id', 'Фамилия', 'Имя', 'Отчество', 'Факультет', 'e-mail', 'Телефон', 'День рождения', 'Роль')
 FOR_TABLE_USERVISIT = ('id', 'Фамилия', 'Имя', 'Отчество', 'Факультет', 'e-mail', 'Телефон', 'Дата рождения', 'Пол', 'Курс', 'Аудитория')
+PAGE_ERROR_ENTER = '''<html>
+                        <head>
+                        <META http-equiv="content-type" content="text/html; charset=windows-1251">
+                        <title></title>
+                        </head>
+                        <body>
+                        <script type="text/javascript">
+                        var sec=10;
+                            function Sec()
+                            {
+                            document.getElementById("sec").innerHTML=sec;
+                            sec--;
+                            if(sec==1)
+                            {
+   	                            location.replace("/")
+                            }
+                            setTimeout('Sec()',1000);
+                            }
+                        </script>
+                        <noscript>
+                        <meta http-equiv="refresh" content="20; /admin/faculty">
+                        </noscript>
+                        Доступ закрыт. Войдите как администратор!<br />
+                        Возврат на главную страницу через: 
+                            <span style="color:red;font-weight: bold;" id="sec" name="sec">10</span> сек. <br />
+                            Если автоматический переход не произошел воспользуйтесь 
+                            <a href="/">данной ссылкой</a>
+                        <script type="text/javascript">
+                            Sec();
+                        </script>
+                        </body>
+                        </html>'''
 
 panel = Blueprint('administrator', __name__, template_folder='templates')
 
@@ -22,7 +54,7 @@ panel = Blueprint('administrator', __name__, template_folder='templates')
 def index_adm():
     # является ли пользователь администратором
     if session.get('id') != 'admin':
-        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
+        return PAGE_ERROR_ENTER
     return render_template('admn.html')
 
 # Панель администратора (пользователь) - все пользователи (выводит всех пользователей из постоянной таблицы person
@@ -30,7 +62,7 @@ def index_adm():
 def allusers():
     # является ли пользователь администратором
     if session.get('id') != 'admin':
-        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
+        return PAGE_ERROR_ENTER
     
     conn = sqlite3.connect("sql/volonteer.db")
     cur = conn.cursor()
@@ -48,7 +80,7 @@ def allusers():
 def deluser():
     # является ли пользователь администратором
     if session.get('id') != 'admin':
-        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
+        return PAGE_ERROR_ENTER
     
     conn = sqlite3.connect("sql/volonteer.db")
     cur = conn.cursor()
@@ -64,7 +96,7 @@ def deluser():
 def event():
     # является ли пользователь администратором
     if session.get('id') != 'admin':
-        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
+        return PAGE_ERROR_ENTER
     
     conn = sqlite3.connect("sql/volonteer.db")
     cur = conn.cursor()
@@ -78,7 +110,7 @@ def event():
 def event_add_html():
     # является ли пользователь администратором
     if session.get('id') != 'admin':
-        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
+        return PAGE_ERROR_ENTER
     return render_template('event_add_html.html')
 
 # Панель администратора (события) - выполняет добавление нового события и редирект к списку всех событий
@@ -86,7 +118,7 @@ def event_add_html():
 def eventadd():
     # является ли пользователь администратором
     if session.get('id') != 'admin':
-        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
+        return PAGE_ERROR_ENTER
     
     event=request.form['event']
     activity=request.form['activity']
@@ -117,7 +149,7 @@ def eventadd():
 def deletevt(id):
     # является ли пользователь администратором
     if session.get('id') != 'admin':
-        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
+        return PAGE_ERROR_ENTER
     
     # Соединение с БД
     conn = sqlite3.connect("sql/volonteer.db")
@@ -134,7 +166,7 @@ def deletevt(id):
 def stat(id_evt):
     # является ли пользователь администратором
     if session.get('id') != 'admin':
-        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
+        return PAGE_ERROR_ENTER
     
     conn = sqlite3.connect("sql/volonteer.db")
     curI = conn.cursor()
@@ -160,7 +192,7 @@ def stat(id_evt):
 def visit(id_evt):
     # является ли пользователь администратором
     if session.get('id') != 'admin':
-        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
+        return PAGE_ERROR_ENTER
     
     conn = sqlite3.connect("sql/volonteer.db")
     curI = conn.cursor()
@@ -181,7 +213,7 @@ def visit(id_evt):
 def check():
     # является ли пользователь администратором
     if session.get('id') != 'admin':
-        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
+        return PAGE_ERROR_ENTER
    
     # Соединение с БД
     conn = sqlite3.connect("sql/volonteer.db")
@@ -205,7 +237,7 @@ def check():
 def faculty():
     # является ли пользователь администратором
     if session.get('id') != 'admin':
-        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
+        return PAGE_ERROR_ENTER
 
     conn=sqlite3.connect("sql/volonteer.db")
     cur=conn.cursor()
@@ -220,7 +252,7 @@ def faculty():
 def facultyadd():
     # является ли пользователь администратором
     if session.get('id') != 'admin':
-        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
+        return PAGE_ERROR_ENTER
 
     full_name = request.form.get('full_name')
     short_name = request.form.get('short_name')
@@ -243,7 +275,7 @@ def facultyadd():
                         </head>
                         <body>
                         <script type="text/javascript">
-                        var sec=10;
+                        var sec=20;
                             function Sec()
                             {
                             document.getElementById("sec").innerHTML=sec;
@@ -282,7 +314,7 @@ def facultyadd():
 def facultydel(f_id):
     # является ли пользователь администратором
     if session.get('id') != 'admin':
-        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
+        return PAGE_ERROR_ENTER
 
     conn=sqlite3.connect("sql/volonteer.db")
     cur=conn.cursor()
@@ -297,7 +329,7 @@ def facultydel(f_id):
 def facultyedit(f_id):
     # является ли пользователь администратором
     if session.get('id') != 'admin':
-        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
+        return PAGE_ERROR_ENTER
 
     conn=sqlite3.connect("sql/volonteer.db")
     cur=conn.cursor()
@@ -312,7 +344,7 @@ def facultyedit(f_id):
 def facultyeditfoo():
     # является ли пользователь администратором
     if session.get('id') != 'admin':
-        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
+        return PAGE_ERROR_ENTER
     f_id = request.form.get('f_id')
     full_name = request.form.get('full_name')
     short_name = request.form.get('short_name')
@@ -337,7 +369,7 @@ def facultyeditfoo():
 def post():
     # является ли пользователь администратором
     if session.get('id') != 'admin':
-        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
+        return PAGE_ERROR_ENTER
 
     conn=sqlite3.connect("sql/volonteer.db")
     cur=conn.cursor()
@@ -352,7 +384,7 @@ def post():
 def addpost():
     # является ли пользователь администратором
     if session.get('id') != 'admin':
-        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
+        return PAGE_ERROR_ENTER
 
     title = request.form.get('titlepost')
     body = request.form.get('bodypost')
@@ -370,7 +402,7 @@ def addpost():
 def postrecovery(id_new):
     # является ли пользователь администратором
     if session.get('id') != 'admin':
-        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
+        return PAGE_ERROR_ENTER
 
     conn=sqlite3.connect("sql/volonteer.db")
     cur=conn.cursor()
@@ -384,7 +416,7 @@ def postrecovery(id_new):
 def postrecoveryfoo():
     # является ли пользователь администратором
     if session.get('id') != 'admin':
-        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
+        return PAGE_ERROR_ENTER
 
     id = request.form.get('id_new')
     date = request.form.get('date')
@@ -404,7 +436,7 @@ def postrecoveryfoo():
 def delpost(id_new):
     # является ли пользователь администратором
     if session.get('id') != 'admin':
-        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
+        return PAGE_ERROR_ENTER
 
     conn=sqlite3.connect("sql/volonteer.db")
     cur=conn.cursor()
@@ -419,6 +451,10 @@ def delpost(id_new):
 # Выгружает всех зарегистрированных пользователей в виде excel файла
 @panel.route('/getdata', methods=['GET','POST'])
 def getdata():
+    # является ли пользователь администратором
+    if session.get('id') != 'admin':
+        return PAGE_ERROR_ENTER
+
     conn=sqlite3.connect('sql/volonteer.db')
     cur = conn.cursor()
     _since = request.form.get('since')
@@ -473,7 +509,7 @@ def getdata():
 @panel.route('/getallusers')
 def getallusers():
     if session.get('id') != 'admin':
-        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
+        return PAGE_ERROR_ENTER
     
     conn = sqlite3.connect("sql/volonteer.db")
     cur = conn.cursor()
@@ -515,7 +551,7 @@ def getallusers():
 @panel.route('/getsomeevents', methods=['GET', 'POST'])
 def getsomeevents():
     if session.get('id') != 'admin':
-        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
+        return PAGE_ERROR_ENTER
     _since = request.form.get('since')
     _to = request.form.get('to')
 
@@ -559,7 +595,7 @@ def getsomeevents():
 @panel.route('/getuserregistronevent/<id_evt>', methods=['GET', 'POST'])
 def getuserregistronevent(id_evt):
     if session.get('id') != 'admin':
-        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
+        return PAGE_ERROR_ENTER
 
     conn = sqlite3.connect("sql/volonteer.db")
     cur = conn.cursor()
@@ -601,7 +637,7 @@ def getuserregistronevent(id_evt):
 @panel.route('/getvisit/<id_evt>', methods=['GET', 'POST'])
 def getvisit(id_evt):
     if session.get('id') != 'admin':
-        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
+        return PAGE_ERROR_ENTER
 
     conn = sqlite3.connect("sql/volonteer.db")
     cur = conn.cursor()
@@ -644,5 +680,5 @@ def getvisit(id_evt):
 @panel.route('/backupdb')
 def backupdb():
     if session.get('id') != 'admin':
-        return '<span>Доступ закрыт. Войдите как администратор!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
+        return PAGE_ERROR_ENTER
     return send_file('sql/volonteer.db', cache_timeout=0)

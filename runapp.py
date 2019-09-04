@@ -8,12 +8,14 @@ from admin.admin import panel
 from user.user import cabin
 
 
+
 app = Flask(__name__)
 # Ключ шифорования для работы с сессиями
 app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
 
 app.register_blueprint(panel, url_prefix='/admin')
 app.register_blueprint(cabin, url_prefix='/us')
+
 
 # ---------------- начало скрипта ----------------- #
 
@@ -121,7 +123,36 @@ def personview():
     link=host[0]+':'+host[1]+'confirm/'+rand              # собираем ссылку из хоста, страницы проверки и случайного числа сгенерированного для пользователя
     
     mail.to_volunteer(email, link, name)                           # функция отправки сообщения из файла mail.py
-    return '<span>На ваш почтовый адрес {0} отправлена ссылка для подтверждения регистрации</span><br /><a href="{1}">Вернуться на главную страницу</a>'.format(email, url_for('index'))
+    return '''<html>
+                        <head>
+                        <META http-equiv="content-type" content="text/html; charset=windows-1251">
+                        <title></title>
+                        </head>
+                        <body>
+                        <script type="text/javascript">
+                        var sec=10;
+                            function Sec()
+                            {
+                            document.getElementById("sec").innerHTML=sec;
+                            sec--;
+                            if(sec==1)
+                            {
+   	                            location.replace("/")
+                            }
+                            setTimeout('Sec()',1000);
+                            }
+                        </script>
+                        <noscript>
+                        <meta http-equiv="refresh" content="20; /">
+                        </noscript>'''+'<span>На ваш почтовый адрес {0} отправлена ссылка для подтверждения регистрации</span><br /><a href="{1}">Вернуться на главную страницу</a>'.format(email, url_for('index'))+'''
+                            <span style="color:red;font-weight: bold;" id="sec" name="sec">10</span> сек. <br />
+                            Если автоматический переход не произошел воспользуйтесь 
+                            <a href="/">данной ссылкой</a>
+                        <script type="text/javascript">
+                            Sec();
+                        </script>
+                        </body>
+                        </html>'''                        
 
 # Регистрация личного кабинета - подтверждение регистрации по ссылке с почты
 @app.route('/confirm/<hash>')
