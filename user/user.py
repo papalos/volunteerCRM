@@ -60,12 +60,23 @@ def cabinet(action):
                 content += '<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td><td>{4}</td></tr>'.format( row[1],row[2],row[3],row[4], delreg)
         content += '</tbody></table>'
     else:    # Отображается когда показываются предстоящие события на которые можно зарегистрироваться
+        # Выделение жирным вкладки таблицы
         bold=1
+
+        # Сортировка в столбцах таблицы
+        srt=request.args.get('srt')
+        if(srt=='event'):
+            sort='event'
+        elif(srt=='activity'):
+            sort='activity'
+        else:
+            sort='date DESC'
+
         # Делаем выборку событий в которх зарегистрировался пользователь с id сохранным в сессии из таблицы Регистриция
         # Из таблицы События выбираем события с id_evt  не входящим в первую выборку, т.е. те на которые данный пользователь еще не регистрировался
-        cur = cur.execute('SELECT * FROM event WHERE id_evt NOT IN (SELECT id_evt FROM registration WHERE id_prsn ={})'.format(session['id']))
+        cur = cur.execute('SELECT * FROM event WHERE id_evt NOT IN (SELECT id_evt FROM registration WHERE id_prsn ={0}) ORDER BY {1}'.format(session['id'], sort))
         # формируем переменную контент из строк вышеуказанной выборки
-        content = '<table class="table table-striped"><thead><th>Событие</th><th>Активность/Предмет</th><th>Дата</th><th>Время прихода</th><th>Адрес</th><th></th></thead><tbody>'
+        content = '<table class="table table-striped"><thead><th><a href="/us/cabinet/nextevt?srt=event">Событие</a></th><th><a href = "/us/cabinet/nextevt?srt=activity">Активность/Предмет</a></th><th><a href="/us/cabinet/nextevt">Дата</a></th><th>Время прихода</th><th>Адрес</th><th></th></thead><tbody>'
         for row in cur:
             ls = row[3].split('-')
             ls = int(''.join(ls))

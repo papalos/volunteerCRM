@@ -98,9 +98,18 @@ def event():
     if session.get('id') != 'admin':
         return PAGE_ERROR_ENTER
     
+    # Сортировка в столбцах таблицы
+    srt=request.args.get('srt')
+    if(srt=='event'):
+        sort='event'
+    elif(srt=='activity'):
+        sort='activity'
+    else:
+        sort='date DESC'
+
     conn = sqlite3.connect("sql/volonteer.db")
     cur = conn.cursor()
-    cur.execute('SELECT * FROM event ORDER BY date DESC')
+    cur.execute('SELECT * FROM event ORDER BY {0}'.format(sort))
     events = cur.fetchall()
     conn.close()
     return render_template('event.html', events=events)
