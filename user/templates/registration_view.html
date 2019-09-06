@@ -15,8 +15,20 @@
         <p class="row"><label class="col-4">Адрес проведения: </label><span class="col-7">{{event[11]}}</span></p>
         <p class="row"><label class="col-4">В штаб: </label><span class="col-7">Зарегистрировано: {{num_staff}} / Max:{{event[8]}}</span></p>
         <p class="row"><label class="col-4">В аудиторию: </label><span class="col-7">Зарегистрировано: {{num_classroom}} / Max:{{event[10]}}</span></p>
-        <p class="row"><label class="col-4">Выберите роль: </label><select class="col-7" name="role"><option>штаб</option><option>аудитория</option></select></p>
-        <p class="text-right m-0"><input class="mr-4" type="submit" value="Зарегистрироваться" /><input class="mr-4" type="button" value="Отменить" onclick="location.href='{{url_for('user.cabinet', action='1')}}'" /></p>
+        <p class="row"><label class="col-4">Выберите роль: </label>
+        <select class="col-7" name="role">
+            {%if num_staff<event[8]%}<option>штаб</option>{%endif%}
+            {%if num_classroom<event[10]%}<option>аудитория</option>{%endif%}
+        </select>
+        </p>
+        <p class="text-right m-0">
+            {%if num_staff<event[8] or num_classroom<event[10] %}
+            <input class="mr-4" type="submit" value="Зарегистрироваться" />
+            {%else%}
+            <p class="text-danger">Регистрация на мероприятие закрыта</p>
+            {%endif%}
+            <input class="mr-4" type="button" value="Отменить" onclick="location.href='{{url_for('user.cabinet', action='1')}}'" />
+        </p>
     </form>
 </div>
     {%endblock%}

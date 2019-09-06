@@ -30,7 +30,7 @@ def cabinet(action):
         # и выбираем из них только те, которые посетил пользователь с id записанным в сессию
         cur = cur.execute('SELECT event.id_evt, event.event, event.activity, event.date FROM event JOIN registration ON event.id_evt=registration.id_evt WHERE registration.id_prsn={} AND registration.visit =1'.format(session['id']))
         # В переменной Контент формируем таблицу для вывода
-        content = '<table class="table table-striped"><thead><th>Событие</th><th>Активность/Предмет</th><th>Дата</th><th>Код подтверждения</th></thead><tbody>'
+        content = '<p>События в которых вы приняли участие в качестве волонтера</p><table class="table table-striped"><thead><th>Событие</th><th>Активность/Предмет</th><th>Дата</th><th>Код подтверждения</th></thead><tbody>'
         # Перебираем все полученные записи
         for row in cur:
             # формируем код подтверждения посещения состоит из id события, даты события, id участника
@@ -44,9 +44,9 @@ def cabinet(action):
         bold=2
         # Получаем пересекающиеся данные из таблиц События и Регистрации
         # и выбираем из них только те, на которые зарегистрирован пользователь с id записанным в сессию
-        cur = cur.execute('SELECT event.id_evt, event.event, event.activity, event.date, registration.role FROM event JOIN registration ON event.id_evt=registration.id_evt WHERE registration.id_prsn={}'.format(session['id']))
+        cur = cur.execute("SELECT event.id_evt, event.event, event.activity, event.date, registration.role FROM event JOIN registration ON event.id_evt=registration.id_evt WHERE registration.id_prsn={} AND date(date) > date('now')".format(session['id']))
         # В переменной Контент формируем таблицу для вывода
-        content = '<table class="table table-striped"><thead><th>Событие</th><th>Активность/Предмет</th><th>Дата</th><th>Роль</th><th></th></thead><tbody>'
+        content = '<p>Предстоящие события на которые вы зарегистрированны в качестве волонтера</p><table class="table table-striped"><thead><th>Событие</th><th>Активность/Предмет</th><th>Дата</th><th>Роль</th><th></th></thead><tbody>'
         # Перебираем все полученные записи
         for row in cur:
             # Получаем из ячейки Дата данные и превращаем их в массив разделяя строку по точкам
@@ -74,9 +74,9 @@ def cabinet(action):
 
         # Делаем выборку событий в которх зарегистрировался пользователь с id сохранным в сессии из таблицы Регистриция
         # Из таблицы События выбираем события с id_evt  не входящим в первую выборку, т.е. те на которые данный пользователь еще не регистрировался
-        cur = cur.execute('SELECT * FROM event WHERE id_evt NOT IN (SELECT id_evt FROM registration WHERE id_prsn ={0}) ORDER BY {1}'.format(session['id'], sort))
+        cur = cur.execute("SELECT * FROM event WHERE id_evt NOT IN (SELECT id_evt FROM registration WHERE id_prsn ={0}) AND date(date) > date('now') ORDER BY {1}".format(session['id'], sort))
         # формируем переменную контент из строк вышеуказанной выборки
-        content = '<table class="table table-striped"><thead><th><a href="/us/cabinet/nextevt?srt=event">Событие</a></th><th><a href = "/us/cabinet/nextevt?srt=activity">Активность/Предмет</a></th><th><a href="/us/cabinet/nextevt">Дата</a></th><th>Время прихода</th><th>Адрес</th><th></th></thead><tbody>'
+        content = '<p>Предстоящие события доступные для регистрации</p><table class="table table-striped"><thead><th><a href="/us/cabinet/nextevt?srt=event">Событие</a></th><th><a href = "/us/cabinet/nextevt?srt=activity">Активность/Предмет</a></th><th><a href="/us/cabinet/nextevt">Дата</a></th><th>Время прихода</th><th>Адрес</th><th></th></thead><tbody>'
         for row in cur:
             ls = row[3].split('-')
             ls = int(''.join(ls))

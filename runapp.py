@@ -254,8 +254,22 @@ def cabinetin():
     return '<span>Увы, но вы не зарегистрированы!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
 
 
-#------------- Перенесен в блупринт user
+#------------- test
+@app.route('/test')
+def test():
+    
+    # Подключаемся к БД
+    conn = sqlite3.connect("sql/volonteer.db")
+    cur = conn.cursor()
 
+    # Делаем выборку всех записей из таблицы Пользователей
+    cur.execute("SELECT date FROM event WHERE date(date) > date('now')")
+    persons = cur.fetchall()
+    
+    conn.close()
+
+    # Если записи не были найдены возвращаем пользователя на главную страницу.
+    return str(persons)
 
 
 # ----------------------- Конец скрипта ------------------------ #
