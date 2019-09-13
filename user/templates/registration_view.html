@@ -13,8 +13,8 @@
         <p class="row"><label class="col-4">Время начала состязания: </label><span class="col-7">{{event[5]}}</span></p>
         <p class="row"><label class="col-4">Продолжительность (мин.): </label><span class="col-7">{{event[6]}}</span></p>
         <p class="row"><label class="col-4">Адрес проведения: </label><span class="col-7">{{event[11]}}</span></p>
-        <p class="row"><label class="col-4">В штаб: </label><span class="col-7">Зарегистрировано: {{num_staff}} / Max:{{event[8]}}</span></p>
-        <p class="row"><label class="col-4">В аудиторию: </label><span class="col-7">Зарегистрировано: {{num_classroom}} / Max:{{event[10]}}</span></p>
+        <p class="row"><label class="col-4">В штаб: </label><span class="col-7">Зарегистрировано: {{num_staff}} из {{event[8]}}</span></p>
+        <p class="row"><label class="col-4">В аудиторию: </label><span class="col-7">Зарегистрировано: {{num_classroom}} из {{event[10]}}</span></p>
         <p class="row"><label class="col-4">Выберите роль: </label>
         <select class="col-7" name="role">
             {%if num_staff<event[8]%}<option>штаб</option>{%endif%}

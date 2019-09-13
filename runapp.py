@@ -25,7 +25,7 @@ app.register_blueprint(cabin, url_prefix='/us')
 def index():
     conn = sqlite3.connect('sql/volonteer.db')
     cur=conn.cursor()
-    cur.execute('SELECT * FROM news ORDER BY id DESC')
+    cur.execute('SELECT * FROM news ORDER BY date DESC LIMIT 10')
     news = cur.fetchall()
     return render_template('index.html', news=news)
 
@@ -146,8 +146,7 @@ def personview():
                         <meta http-equiv="refresh" content="20; /">
                         </noscript>'''+'<span>На ваш почтовый адрес {0} отправлена ссылка для подтверждения регистрации</span><br /><a href="{1}">Вернуться на главную страницу</a>'.format(email, url_for('index'))+'''
                             <span style="color:red;font-weight: bold;" id="sec" name="sec">10</span> сек. <br />
-                            Если автоматический переход не произошел воспользуйтесь 
-                            <a href="/">данной ссылкой</a>
+                            Если автоматический переход не произошел, воспользуйтесь <a href="/">данной ссылкой</a>.
                         <script type="text/javascript">
                             Sec();
                         </script>
@@ -174,7 +173,7 @@ def confirm(hash):
     conn.close()
 
     # отправить логин и пароль на почтовый адрес
-    mail.send_passw(row[5], row[8], row[9], row[1])    
+    mail.send_passw(row[5], row[8], row[9], row[2])    
     return redirect(url_for('index'))
 
 # IV Авторизация - Вход в личный кабинет волонтера - Форма авторизации
@@ -213,7 +212,7 @@ def recovery_send():
         return render_template('recovery.html', message='Указанный адрес в базе данных не найден')
     else:
         mail.send_recovery(email, data_reg[0], data_reg[1])
-        return render_template('recovery.html', message='Логин и пароль отправлены на вашу почту')
+        return render_template('recovery.html', message='Логин и пароль отправлены на вашу почту! <a href="/login">Войти в личный кабинет</a>')
 
 # Личный кабинет волонтера - Вход - обработка формы
 @app.route('/cabinetin', methods=['GET','POST'])

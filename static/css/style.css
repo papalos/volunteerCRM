@@ -26,8 +26,8 @@
 }
 
 .logo {
-    font-family: Beckett;
-    font-size: 200%;	
+    //font-family: Beckett;
+    font-size: 250%;	
 	color: #ee7501;
 }
 
@@ -51,4 +51,14 @@
     .hide:checked + label ~ div {
         display: block;
     }
-   
+
+/* --------------------- форма регистрации на главной --------------------------*/
+.regform {
+    float: right;
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 10px;
+    background: #0570f73b;
+    margin-top: 50px;
+    box-shadow: 10px 10px 20px -10px rgba(0,0,0,0.5)
+}
