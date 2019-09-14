@@ -55,7 +55,7 @@ def cabinet(action):
             ls = int(''.join(ls))
             # получаем и преобразуем в число текущую дату и сравниваем его с датой события
             if (ls>int(''.join(date.today().isoformat().split('-')))):
-                delreg = '<a href="/us/unregistration/{}" onclick="return conf_cancel()">Отменить регистрацию</a>'.format(row[0])
+                delreg = '<a href="/us/cancel_registration/{}">Отменить регистрацию</a>'.format(row[0])
                 # формируем строки таблицы только из тех событий даты которых больше текущей даты.
                 content += '<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td><td>{4}</td></tr>'.format( row[1],row[2],row[3],row[4], delreg)
         content += '</tbody></table>'
@@ -143,3 +143,9 @@ def unregistration(id_evt):
     conn.close()
     
     return redirect(url_for('user.cabinet', action='regevt'))
+
+# Личный кабинет - Отмена регистрации пользователя на событие
+@cabin.route('/cancel_registration/<id_evt>', methods=['GET', 'POST'])
+def cancel_registration(id_evt):
+    
+    return render_template("cancel_registration.html", id_evt=id_evt)
