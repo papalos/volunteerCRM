@@ -10,6 +10,9 @@ from user.user import cabin
 
 
 app = Flask(__name__)
+# Время жизни сессии
+app.permanent_session_lifetime = timedelta(hours=1)
+
 # Ключ шифорования для работы с сессиями
 app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
 
