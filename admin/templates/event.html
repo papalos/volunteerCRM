@@ -4,7 +4,7 @@
 <div class="m-3 p-3 border rounded-lg">
     <a class="m-2" href="{{url_for('administrator.event_add_html')}}">Создать событие</a>
     <h2 class="m-2">Все события:</h2><div><form action="{{url_for('administrator.getsomeevents')}}" method="post">Выгрузить события за период с <input name="since" type="date" /> по <input name="to" type="date" /> <input type="submit" value="Пуск" /></form></div>
-
+    <div><form action="{{url_for('administrator.scopereg')}}" method="post">Динамика регистрации на события за период с <input name="since" type="date" /> по <input name="to" type="date" /> <input type="submit" value="Пуск" /></form></div>
     <table class="table table-striped m-auto">
         <thead>
         <th><a href="/admin/event?srt=event">Событие</a></th>

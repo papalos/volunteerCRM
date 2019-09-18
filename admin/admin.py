@@ -599,6 +599,25 @@ def getsomeevents():
         conn.close()
     return send
 
+
+# Просмотр динамики регистрации на события по заданным срокам
+@panel.route('/scopereg', methods=['GET', 'POST'])
+def scopereg():
+    if session.get('id') != 'admin':
+        return PAGE_ERROR_ENTER
+
+    _since = request.form.get('since')
+    _to = request.form.get('to')
+
+    conn = sqlite3.connect("sql/volonteer.db")
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM event JOIN (SELECT id_evt, role, COUNT(id_prsn) AS num FROM registration WHERE id_evt IN (SELECT id_evt FROM event WHERE date >= "{0}" AND date <= "{1}") GROUP BY id_evt, role) AS tab ON event.id_evt=tab.id_evt ORDER BY event.id_evt'.format(_since, _to))
+    someevents = cur.fetchall()
+
+
+  
+    return render_template("scope.html",someevents=someevents)
+
 # Выгружает зарегистрированных пользователей по конкретному событию
 @panel.route('/getuserregistronevent/<id_evt>', methods=['GET', 'POST'])
 def getuserregistronevent(id_evt):
