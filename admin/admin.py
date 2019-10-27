@@ -613,8 +613,6 @@ def scopereg():
     cur = conn.cursor()
     cur.execute('SELECT * FROM event JOIN (SELECT id_evt, role, COUNT(id_prsn) AS num FROM registration WHERE id_evt IN (SELECT id_evt FROM event WHERE date >= "{0}" AND date <= "{1}") GROUP BY id_evt, role) AS tab ON event.id_evt=tab.id_evt ORDER BY event.id_evt'.format(_since, _to))
     someevents = cur.fetchall()
-
-
   
     return render_template("scope.html",someevents=someevents)
 

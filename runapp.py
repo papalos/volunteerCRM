@@ -68,7 +68,7 @@ def xxx():
 def person():
     conn = sqlite3.connect("sql/volonteer.db")
     cur = conn.cursor()
-    cur.execute('SELECT * FROM faculty')
+    cur.execute('SELECT * FROM faculty ORDER BY short_name')
     facultes = cur.fetchall()
     conn.close()
     return render_template('personadd.html', facultes=facultes)
