@@ -5,6 +5,7 @@
     <h2 class="m-2">Панель администратора</h2>
     <br />
     <a href="{{url_for('administrator.allusers')}}" style="margin:15px"><figure style="display:inline-block"><img src="{{url_for('static', filename='image/for_admin/volunteers.png')}}" /><figcaption>Управление пользователями</figcaption></figure></a>
+    <a href="{{url_for('administrator.tempusers')}}" style="margin:15px"><figure style="display:inline-block"><img src="{{url_for('static', filename='image/for_admin/anonimus.png')}}" /><figcaption>Незарегистрированные</figcaption></figure></a>
     <a href="{{url_for('administrator.event')}}" style="margin:15px"><figure style="display:inline-block"><img src="{{url_for('static', filename='image/for_admin/event.png')}}" /><figcaption>Управление событиями</figcaption></figure></a>
     <span style="margin:15px">
         <input type="checkbox" id="hd-1" class="hide" />

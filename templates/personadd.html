@@ -47,7 +47,7 @@
         <p class="row"><label class="col-4">Логин: </label><input id="vlrtlog" class="col-7" type="text" name="login" placeholder="mylogin" required /></p>
         <p id="errpass" style="display:none"><span class="col-11 text-danger">Пароль не должен совпадать с логином</span></p>
         <!--Изменения Старт-->
-        <p class="row"><label class="col-4">Пароль: </label><input id="vltrpass" class="col-7" type="password" name="password" placeholder="passWord45" pattern="(?=.+[0-9])(?=.+[a-z])(?=.+[A-Z])[0-9a-zA-Z!@#$%^&*]{8,}" required /></p>
+        <p class="row"><label class="col-4">Пароль: </label><input id="vltrpass" class="col-7" type="password" name="password" placeholder="passWord45" pattern="(?=^.{8,20}$)(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?!.*\s).*$" required /></p>
         <p class="row"><span class="col-11 small">Пароль должен быть не менее 8 символов и содержать не менее одной цифры, строчной и прописной буквы латинского алфавита.</span></p>
         <p class="row"><span class="col-11"><input id="check" type="checkbox" name="check"> <label>Подтверждаю достоверность предоставленной информации</label></span></p>
         <p class="row"><span class="col-10"><input id="check" type="checkbox" name="agree" required> Даю свое согласие на сбор, запись, систематизацию, накопление, хранение, уточнение (обновление, изменение), извлечение, использование предоставленных персональных данных.</span></p>

@@ -253,7 +253,35 @@ def cabinetin():
     conn.close()
 
     # Если записи не были найдены возвращаем пользователя на главную страницу.
-    return '<span>Увы, но вы не зарегистрированы!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
+    return '''<html>
+                        <head>
+                        <META http-equiv="content-type" content="text/html; charset=windows-1251">
+                        <title></title>
+                        </head>
+                        <body>
+                        <script type="text/javascript">
+                        var sec=10;
+                            function Sec()
+                            {
+                            document.getElementById("sec").innerHTML=sec;
+                            sec--;
+                            if(sec==1)
+                            {
+   	                            location.replace("/")
+                            }
+                            setTimeout('Sec()',1000);
+                            }
+                        </script>
+                        <noscript>
+                        <meta http-equiv="refresh" content="20; /">
+                        </noscript><span>Увы, но вы не зарегистрированы!</span><br />
+                            <span style="color:red;font-weight: bold;" id="sec" name="sec">10</span> сек. <br />
+                            Если автоматический переход не произошел, воспользуйтесь <a href="/">данной ссылкой</a>.
+                        <script type="text/javascript">
+                            Sec();
+                        </script>
+                        </body>
+                        </html>'''
 
 
 #------------- test

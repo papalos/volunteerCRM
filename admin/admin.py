@@ -2,7 +2,7 @@ from flask import Blueprint, Flask, render_template, request, redirect, url_for,
 import sqlite3                                                                    # для работы с БД SQLite
 from datetime import date, timedelta                                              # класс для работы с датой
 import random                                                                     # для генерации случайных чисел
-# import mail                                                                     # отправка сообщения для подтверждения регистрации
+import mail                                                                       # отправка сообщения для подтверждения регистрации
 # import checker                                                                  # проверки
 import xlsxwriter                                                                 # создание документа .xmlx
 
@@ -74,6 +74,44 @@ def allusers():
     conn.close()
     return render_template('allusers.html', persons=persons)
 
+# Панель администратора (без регистрации) - не завершившие регистрацию (выводит всех пользователей из временной таблицы temp_user)
+@panel.route('/tempusers')
+def tempusers():
+    # является ли пользователь администратором
+    if session.get('id') != 'admin':
+        return PAGE_ERROR_ENTER
+    
+    conn = sqlite3.connect("sql/volonteer.db")
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM temp_user')
+    persons = cur.fetchall()
+    conn.close()
+    return render_template('tempusers.html', persons=persons)
+
+# Регистрация личного кабинета от имени администратора
+@panel.route('/confirm_adm/<hash>')
+def confirm_adm(hash):
+     # Соединение с БД
+    conn = sqlite3.connect("sql/volonteer.db")
+    cur = conn.cursor()
+    # Нахождение записи во временной таблице temp_user по коду в ссылке подтверждения
+    cur.execute('SELECT * FROM temp_user WHERE hash="{}"'.format(hash))
+    row = cur.fetchone()
+    if row==None: return '<span>Данный пользователь не обнаружен!</span><br /><a href="{}">Вернуться к временной таблице</a>'.format(url_for('administrator.tempusers'))
+    # Перезапись значений в постоянную таблицу person
+    cur.execute('INSERT INTO person (surname_prsn, name_prsn, patronymic_prsn, faculty, email, phone, birthday, login, password, date_reg, sex, year_st) VALUES ("{0}", "{1}", "{2}", "{3}", "{4}", "{5}", "{6}", "{7}", "{8}", "{9}", "{10}", "{11}")'.format(row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12]))
+    conn.commit()
+    # Удаление записи во временной таблице temp_user по коду в ссылке
+    cur.execute('DELETE FROM temp_user WHERE hash="{}"'.format(hash))
+    conn.commit()
+    conn.close()
+
+    # отправить логин и пароль на почтовый адрес
+    mail.send_passw(row[5], row[8], row[9], row[2])    
+    return redirect(url_for('administrator.tempusers'))
+
+
+
 # Панель администратора (пользователь) - удаляет пользователя из постоянной таблицы person
 @panel.route('/deluser')
 def deluser():
@@ -89,6 +127,10 @@ def deluser():
     conn.commit()
     conn.close()
     return redirect(url_for('administrator.allusers'))
+
+
+
+# ----------------------------- Раздел с событиями -----------------------------------------------
 
 # Панель администратора (события) - выводит список всех событий
 @panel.route('/event')
@@ -238,6 +280,9 @@ def check():
     conn.close()    
     return redirect(url_for('administrator.event'))
 
+
+
+
 # ------------------------------------- Раздел о факультетах -----------------------------------------------------------
 
 # Форма для информации о факультетах
@@ -369,6 +414,8 @@ def facultyeditfoo():
     conn.close()
 
     return redirect(url_for('administrator.faculty'))
+
+
 
 # --------------- Блок новостей -------------------------------------------------------------------------
 

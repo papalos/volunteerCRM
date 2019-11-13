@@ -16,3 +16,12 @@ function conf_cancel() {
         return false;
     }
 }
+
+function conf_reg() {
+    if (confirm("Зарегистрировать пользователя?")) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
