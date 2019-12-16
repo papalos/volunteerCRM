@@ -168,7 +168,7 @@ def confirm(hash):
     if row==None: return '<span>Ваша ссылка подтверждения не действительна!</span><br /><a href="{}">Вернуться на главную страницу</a>'.format(url_for('index'))
     # (Захешировать пароль перед перезаписью - не реализовано!)
     # Перезапись значений в постоянную таблицу person
-    cur.execute('INSERT INTO person (surname_prsn, name_prsn, patronymic_prsn, faculty, email, phone, birthday, login, password, date_reg, sex, year_st) VALUES ("{0}", "{1}", "{2}", "{3}", "{4}", "{5}", "{6}", "{7}", "{8}", "{9}", "{10}", "{11}")'.format(row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12]))
+    cur.execute('INSERT INTO person (surname_prsn, name_prsn, patronymic_prsn, faculty, email, phone, birthday, login, password, date_reg, sex, year_st) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', (row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12]))
     conn.commit()
     # Удаление записи во временной таблице temp_user по коду в ссылке
     cur.execute('DELETE FROM temp_user WHERE hash="{}"'.format(hash))
