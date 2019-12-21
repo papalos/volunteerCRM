@@ -13,7 +13,7 @@
         <th><a href="/admin/event?srt=event">Событие</a></th>
         <th><a href="/admin/event?srt=activity">Активность/Предмет</a></th>
         <th><a href="/admin/event">Дата</a></th>
-        <th>Редактировать</th>
+        <th>Редактировать<span class="text-danger">(warning)</span></th>
         <th colspan="2" align="center">Статистика</th>
         </thead>
         {%for evt in events%}
@@ -21,7 +21,10 @@
             <td>{{evt[1]}}</td>
             <td>{{evt[2]}}</td>
             <td>{{evt[3]}}</td>
-            <td><a href="{{url_for('administrator.deletevt', id=evt[0])}}" onclick="return conf_del()">удалить<a></td>
+            <td>
+                <a class="text-danger" href="{{url_for('administrator.deletevt', id=evt[0])}}" onclick="return conf_del()">удалить<a>
+                / <a class="text-danger" href="{{url_for('administrator.changevt', id=evt[0])}}" onclick="return conf_change()">редактировать<a>
+            </td>
             <td><a href="{{url_for('administrator.stat', id_evt=evt[0])}}">регистрации<a></td>
             <td><a href="{{url_for('administrator.visit', id_evt=evt[0])}}">посещения<a></td>
         </tr>

@@ -203,10 +203,59 @@ def deletevt(id):
     
     # Соединение с БД
     conn = sqlite3.connect("sql/volonteer.db")
-    cur = conn.cursor()    
+    cur = conn.cursor()
+    # Удаляем запись из таблицы событий
     cur.execute("DELETE FROM event WHERE id_evt = '{}'".format(id))
+    # Удаляем запись из таблицы регистраций на событие
     cur.execute("DELETE FROM registration WHERE id_evt = '{}'".format(id))
     conn.commit()
+    conn.close()
+    
+    return redirect(url_for('administrator.event'))
+
+# Панель администратора (события) - редактирование события
+@panel.route('/changevt/<id>')
+def changevt(id):
+    # является ли пользователь администратором
+    if session.get('id') != 'admin':
+        return PAGE_ERROR_ENTER
+    
+    # Соединение с БД
+    conn = sqlite3.connect("sql/volonteer.db")
+    cur = conn.cursor()    
+    cur.execute("SELECT * FROM event WHERE id_evt = '{}'".format(id))
+    test_str = cur.fetchone()
+    conn.close()
+    
+    return render_template('event_change_html.html', event=test_str)
+
+# Панель администратора (события) - установка изменений в событии
+@panel.route('/eventsetchng', methods=['GET', 'POST'])
+def eventsetchng():
+    # является ли пользователь администратором
+    if session.get('id') != 'admin':
+        return PAGE_ERROR_ENTER
+    id=request.form['id']
+    event=request.form['event']
+    activity=request.form['activity']
+    date=request.form['date']
+    time_in=request.form['time_in']
+    time_start=request.form['time_start']
+    duration=request.form['duration']
+    staff_min=request.form['staff_min']
+    staff_max=request.form['staff_max']
+    classroom_min=request.form['classroom_min']
+    classroom_max=request.form['classroom_max']
+    address=request.form['address']
+
+    # Соединение с БД
+    conn = sqlite3.connect("sql/volonteer.db")
+    cur = conn.cursor()    
+    # Вставка записи в таблицу событий
+    cur.execute("UPDATE event SET event=?, activity=?, date=?, time_in=?, time_start=?, duration=?, staff_min=?, staff_max=?, classroom_min=?, classroom_max=?, address=? WHERE id_evt=?", (event,activity,date,time_in,time_start,duration,staff_min,staff_max,classroom_min,classroom_max,address,id))
+    # Фиксируем изменения в базе
+    conn.commit()    
+    # Закрываем соединение
     conn.close()
     
     return redirect(url_for('administrator.event'))
@@ -447,7 +496,7 @@ def addpost():
 
     conn=sqlite3.connect("sql/volonteer.db")
     cur=conn.cursor()
-    cur.execute('INSERT INTO news (date, title, body, type) VALUES ("{}","{}","{}", "{}")'.format(date.today(), title, body, type))
+    cur.execute('INSERT INTO news (date, title, body, type) VALUES (?,?,?,?)',(date.today(), title, body, type))
     conn.commit()
     conn.close()
     return redirect(url_for('administrator.post'))
