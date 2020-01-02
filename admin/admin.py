@@ -271,7 +271,7 @@ def stat(id_evt):
     curI = conn.cursor()
     curII = conn.cursor()
     # Выборка волонтеров зарегистрированных на конкретное событие
-    curI.execute("SELECT p.id_prsn, surname_prsn, name_prsn, patronymic_prsn, faculty, email, phone, birthday, r.role FROM registration AS r JOIN person AS p ON r.id_prsn=p.id_prsn WHERE r.id_evt = {} ORDER BY surname_prsn".format(id_evt))
+    curI.execute("SELECT p.id_prsn, surname_prsn, name_prsn, patronymic_prsn, faculty, email, phone, birthday, r.role, r.visit, r.classroom FROM registration AS r JOIN person AS p ON r.id_prsn=p.id_prsn WHERE r.id_evt = {} ORDER BY surname_prsn".format(id_evt))
     # Данные о событии по его id
     curII.execute("SELECT * FROM event WHERE id_evt = {}".format(id_evt))
     registration = curI.fetchall()

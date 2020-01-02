@@ -25,6 +25,21 @@
             <th>Аудитория</th>
             </thead>
             {%for r in registration%}
+            {%if r[9] == 1 %}
+            <tr style="color:green">
+                <td>{{r[0]}}</td>
+                <td>{{r[1]}}</td>
+                <td>{{r[2]}}</td>
+                <td>{{r[3]}}</td>
+                <td>{{r[4]}}</td>
+                <td>{{r[5]}}</td>
+                <td>{{r[6]}}</td>
+                <td>{{r[7]}}</td>
+                <td>{{r[8]}}</td>
+                <td><input type="checkbox" name="{{r[0]}}" checked="checked" /></td>
+                <td><input type="text" size="10" name="classroom_for_{{r[0]}}" value="{{r[10]}}" /></td>
+            </tr>
+            {% else %}
             <tr>
                 <td>{{r[0]}}</td>
                 <td>{{r[1]}}</td>
@@ -38,6 +53,7 @@
                 <td><input type="checkbox" name="{{r[0]}}" /></td>
                 <td><input type="text" size="10" name="classroom_for_{{r[0]}}" /></td>
             </tr>
+            {% endif %}
             {%endfor%}
         </table>
         <div class="text-right"><input type="submit" value="Отметить" /></div>
