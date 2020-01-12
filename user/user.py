@@ -44,9 +44,9 @@ def cabinet(action):
         bold=2
         # Получаем пересекающиеся данные из таблиц События и Регистрации
         # и выбираем из них только те, на которые зарегистрирован пользователь с id записанным в сессию
-        cur = cur.execute("SELECT event.id_evt, event.event, event.activity, event.date, registration.role FROM event JOIN registration ON event.id_evt=registration.id_evt WHERE registration.id_prsn={} AND date(date) > date('now')".format(session['id']))
+        cur = cur.execute("SELECT event.id_evt, event.event, event.activity, event.date, event.time_in, event.address, registration.role FROM event JOIN registration ON event.id_evt=registration.id_evt WHERE registration.id_prsn={} AND date(date) > date('now')".format(session['id']))
         # В переменной Контент формируем таблицу для вывода
-        content = '<p>Предстоящие события, на которые вы зарегистрированны в качестве волонтера</p><table class="table table-striped"><thead><th>Событие</th><th>Активность/Предмет</th><th>Дата</th><th>Роль</th><th></th></thead><tbody>'
+        content = '<p>Предстоящие события, на которые вы зарегистрированны в качестве волонтера</p><table class="table table-striped"><thead><th>Событие</th><th>Активность/Предмет</th><th>Дата</th><th>Время явки</th><th>Адрес</th><th>Роль</th><th></th></thead><tbody>'
         # Перебираем все полученные записи
         for row in cur:
             # Получаем из ячейки Дата данные и превращаем их в массив разделяя строку по точкам
@@ -57,7 +57,7 @@ def cabinet(action):
             if (ls>int(''.join(date.today().isoformat().split('-')))):
                 delreg = '<a href="/us/cancel_registration/{}">Отменить регистрацию</a>'.format(row[0])
                 # формируем строки таблицы только из тех событий даты которых больше текущей даты.
-                content += '<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td><td>{4}</td></tr>'.format( row[1],row[2],row[3],row[4], delreg)
+                content += '<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td><td>{4}</td><td>{5}</td><td>{6}</td></tr>'.format( row[1],row[2],row[3],row[4],row[5],row[6],delreg)
         content += '</tbody></table>'
     else:    # Отображается когда показываются предстоящие события на которые можно зарегистрироваться
         # Выделение жирным вкладки таблицы
@@ -76,7 +76,7 @@ def cabinet(action):
         # Из таблицы События выбираем события с id_evt  не входящим в первую выборку, т.е. те на которые данный пользователь еще не регистрировался
         cur = cur.execute("SELECT * FROM event WHERE id_evt NOT IN (SELECT id_evt FROM registration WHERE id_prsn ={0}) AND date(date) > date('now') ORDER BY {1}".format(session['id'], sort))
         # формируем переменную контент из строк вышеуказанной выборки
-        content = '<p>Предстоящие события, доступные для регистрации</p><table class="table table-striped"><col width="20%"><col width="20%"><col width="15%"><col width="10%"><col width="20%"><col width="15%"> <thead><th><a href="/us/cabinet/nextevt?srt=event">Событие</a></th><th><a href = "/us/cabinet/nextevt?srt=activity">Активность/Предмет</a></th><th><a href="/us/cabinet/nextevt">Дата</a></th><th>Время прихода</th><th>Адрес</th><th></th></thead><tbody>'
+        content = '<p>Предстоящие события, доступные для регистрации</p><table class="table table-striped"><col width="20%"><col width="20%"><col width="15%"><col width="10%"><col width="20%"><col width="15%"> <thead><th><a href="/us/cabinet/nextevt?srt=event">Событие</a></th><th><a href = "/us/cabinet/nextevt?srt=activity">Активность/Предмет</a></th><th><a href="/us/cabinet/nextevt">Дата</a></th><th>Время явки</th><th>Адрес</th><th></th></thead><tbody>'
         for row in cur:
             ls = row[3].split('-')
             ls = int(''.join(ls))
