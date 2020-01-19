@@ -35,8 +35,9 @@
             <td>{{pers[13]}}</td>
             <td>{{pers[14]}}</td>
             <td>
-                <a class="text-danger" href="{{url_for('administrator.deluser')}}?idu={{pers[0]}}" onclick="return conf_del()">удалить</a> 
+                <a class="text-danger" href="{{url_for('administrator.deluser')}}?idu={{pers[0]}}" onclick="return conf_del()">удалить</a>
                 / <a class="text-danger" href="{{url_for('administrator.editperson', id=pers[0])}}" onclick="return conf_change()">редактировать</a>
+                / <a class="text-warning" href="{{url_for('administrator.extraregistration', id=pers[0])}}" onclick="return conf_extrareg()">дорегистрировать</a>
             </td>
         </tr>
         {%endfor%}

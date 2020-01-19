@@ -170,6 +170,45 @@ def setedit():
     return redirect(url_for('administrator.index_adm'))
 
 
+# Форма дорегистрации пользователя на событие 
+@panel.route('/extraregistration/<id>')
+def extraregistration(id):
+    # является ли пользователь администратором
+    if session.get('id') != 'admin':
+        return PAGE_ERROR_ENTER
+
+
+    conn = sqlite3.connect("sql/volonteer.db")
+    curI = conn.cursor()
+    curII = conn.cursor()
+
+    curI.execute("SELECT * FROM person WHERE id_prsn = ?", (id,))
+    curII.execute("SELECT id_evt FROM event")
+    result=curI.fetchone()
+    evts=curII.fetchall()
+    return render_template('extraregistration.html', result=result, evts=evts)
+
+# Сохранение в БД сведений о дорегистрации пользователя
+@panel.route('/extraregsave', methods=['GET','POST'])
+def extraregsave():
+    id_prsn=request.form['id_prsn']
+    id_evt=request.form['id_evt']
+    role=request.form['role']
+    classroom=request.form['classroom']
+
+    # Соединение с БД
+    conn = sqlite3.connect("sql/volonteer.db")
+    cur = conn.cursor()
+
+    # Удаление старых записей во временной таблице по проществии 30 дней с момента регистрации
+    cur.execute("INSERT INTO registration VALUES (?,?,1,?,?)",(id_prsn, id_evt, role, classroom))
+    
+    conn.commit()
+    conn.close()
+   
+    return redirect(url_for('administrator.index_adm'))
+
+
 # ----------------------------- Раздел с событиями -----------------------------------------------
 
 # Панель администратора (события) - выводит список всех событий

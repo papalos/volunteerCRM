@@ -34,3 +34,12 @@ function conf_reg() {
         return false;
     }
 }
+
+function conf_extrareg() {
+    if (confirm("Вы уверены, что хотите совершить необратимое действие дорегистриции пользователя?")) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
