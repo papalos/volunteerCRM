@@ -76,9 +76,9 @@ def person():
 # Регистрация личного кабинета - добавление нового пользователя во временную таблицу и отправка подтверждающего сообщения
 @app.route('/personview', methods=['GET', 'POST'])
 def personview():
-    surname=request.form['surname']
-    name=request.form['name']
-    patronymic=request.form['patronymic']
+    surname=request.form['surname'].strip().title()
+    name=request.form['name'].strip().title()
+    patronymic=request.form['patronymic'].strip().title()
     birthday=request.form['birthday']
     faculty=request.form['faculty']
     email=request.form['email']
@@ -91,7 +91,6 @@ def personview():
     date_reg = str(today)
     sex=request.form['sex']
     year_st=request.form['year_st']
-
     # Соединение с БД
     conn = sqlite3.connect("sql/volonteer.db")
     cur = conn.cursor()

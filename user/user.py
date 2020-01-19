@@ -43,8 +43,8 @@ def cabinet(action):
     elif (action=='regevt'): # отображается когда запрашивается события на которые зарегистрирован пользователь
         bold=2
         # Получаем пересекающиеся данные из таблиц События и Регистрации
-        # и выбираем из них только те, на которые зарегистрирован пользователь с id записанным в сессию
-        cur = cur.execute("SELECT event.id_evt, event.event, event.activity, event.date, event.time_in, event.address, registration.role FROM event JOIN registration ON event.id_evt=registration.id_evt WHERE registration.id_prsn={} AND date(date) > date('now')".format(session['id']))
+        # и выбираем из них только те, на которые зарегистрирован пользователь с id записанным в сессию и время проведения больше или равно текущему
+        cur = cur.execute("SELECT event.id_evt, event.event, event.activity, event.date, event.time_in, event.address, registration.role FROM event JOIN registration ON event.id_evt=registration.id_evt WHERE registration.id_prsn={} AND date(date) >= date('now')".format(session['id']))
         # В переменной Контент формируем таблицу для вывода
         content = '<p>Предстоящие события, на которые вы зарегистрированны в качестве волонтера</p><table class="table table-striped"><thead><th>Событие</th><th>Активность/Предмет</th><th>Дата</th><th>Время явки</th><th>Адрес</th><th>Роль</th><th></th></thead><tbody>'
         # Перебираем все полученные записи
@@ -55,9 +55,12 @@ def cabinet(action):
             ls = int(''.join(ls))
             # получаем и преобразуем в число текущую дату и сравниваем его с датой события
             if (ls>int(''.join(date.today().isoformat().split('-')))):
-                delreg = '<a href="/us/cancel_registration/{}">Отменить регистрацию</a>'.format(row[0])
-                # формируем строки таблицы только из тех событий даты которых больше текущей даты.
-                content += '<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td><td>{4}</td><td>{5}</td><td>{6}</td></tr>'.format( row[1],row[2],row[3],row[4],row[5],row[6],delreg)
+                delreg = '<a href="/us/cancel_registration/{}">Отменить регистрацию</a>'.format(row[0])                
+            else:
+                # если предстоящее событие завтра отменить регистрацию нельзя, ссылка на отмену регистрации не выводится в таблице
+                delreg = ''
+            # формируем строки таблицы только из тех событий даты которых больше текущей даты.
+            content += '<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td><td>{4}</td><td>{5}</td><td>{6}</td></tr>'.format( row[1],row[2],row[3],row[4],row[5],row[6],delreg)
         content += '</tbody></table>'
     else:    # Отображается когда показываются предстоящие события на которые можно зарегистрироваться
         # Выделение жирным вкладки таблицы

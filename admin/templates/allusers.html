@@ -18,7 +18,7 @@
         <th>Дата регистрации</th>
         <th>Зарегистрировался</th>
         <th>Посетил</th>
-        <th></th>
+        <th class="text-danger">Warning</th>
         </thead>
         {%for pers in persons%}
         <tr>
@@ -34,7 +34,10 @@
             <td>{{pers[10]}}</td>
             <td>{{pers[13]}}</td>
             <td>{{pers[14]}}</td>
-            <td><a href="{{url_for('administrator.deluser')}}?idu={{pers[0]}}" onclick="return conf_del()">удалить</a></td>
+            <td>
+                <a class="text-danger" href="{{url_for('administrator.deluser')}}?idu={{pers[0]}}" onclick="return conf_del()">удалить</a> 
+                / <a class="text-danger" href="{{url_for('administrator.editperson', id=pers[0])}}" onclick="return conf_change()">редактировать</a>
+            </td>
         </tr>
         {%endfor%}
     </table>

@@ -128,6 +128,46 @@ def deluser():
     conn.close()
     return redirect(url_for('administrator.allusers'))
 
+# Открытие на редактирование данных указанного пользователя 
+@panel.route('/editperson/<id>')
+def editperson(id):
+    # является ли пользователь администратором
+    if session.get('id') != 'admin':
+        return PAGE_ERROR_ENTER
+
+
+    conn = sqlite3.connect("sql/volonteer.db")
+    cur = conn.cursor()
+
+    cur.execute("SELECT * FROM person WHERE id_prsn = ?", (id,))
+    result=cur.fetchone()
+    return render_template('personedit.html', result=result)
+
+# Сохранение в БД отредактированных данных пользователя
+@panel.route('/setedit', methods=['GET','POST'])
+def setedit():
+    id=request.form['id']
+    surname=request.form['surname']
+    name=request.form['name']
+    patronymic=request.form['patronymic']
+    birthday=request.form['birthday']
+    faculty=request.form['faculty']
+    email=request.form['email']
+    phone=request.form['phone']
+    login=request.form['login']
+    password=request.form['password']
+    sex=request.form['sex']
+    # Соединение с БД
+    conn = sqlite3.connect("sql/volonteer.db")
+    cur = conn.cursor()
+
+    # Удаление старых записей во временной таблице по проществии 30 дней с момента регистрации
+    cur.execute("UPDATE person SET surname_prsn = ?, name_prsn = ?, patronymic_prsn=?, faculty=?, email=?, phone=?, birthday=?, login=?, password=?, sex=? WHERE id_prsn = ?",(surname, name, patronymic, faculty, email, phone, birthday, login, password, sex, id))
+    
+    conn.commit()
+    conn.close()
+   
+    return redirect(url_for('administrator.index_adm'))
 
 
 # ----------------------------- Раздел с событиями -----------------------------------------------

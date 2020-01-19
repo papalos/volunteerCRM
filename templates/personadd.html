@@ -44,7 +44,7 @@
         <p class="row"><label class="col-4">E-mail: </label><input id="vltremail" class="col-7" type="email" name="email" placeholder="myaddress@yandex.ru" required /></p>
         <p id="errtel" style="display:none" class="row"><span class="col-1 text-danger">Неверный формат телефонного номера</span></p>
         <p class="row"><label class="col-4">Телефон: </label><input id="vltrtel" class="col-7" type="tel" name="phone" placeholder="+7(903)555 55 55" required /></p>
-        <p class="row"><label class="col-4">Логин: </label><input id="vlrtlog" class="col-7" type="text" name="login" placeholder="mylogin" required /></p>
+        <p class="row"><label class="col-4">Логин: </label><input id="vlrtlog" class="col-7" type="text" name="login" placeholder="mylogin" pattern="[A-Za-zА-Яа-яЁё0-9]{1,20}" required /></p>
         <p id="errpass" style="display:none"><span class="col-11 text-danger">Пароль не должен совпадать с логином</span></p>
         <!--Изменения Старт-->
         <p class="row"><label class="col-4">Пароль: </label><input id="vltrpass" class="col-7" type="password" name="password" placeholder="passWord45" pattern="(?=^.{8,20}$)(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?!.*\s).*$" required /></p>
