@@ -609,7 +609,7 @@ def postrecoveryfoo():
     
     conn=sqlite3.connect("sql/volonteer.db")
     cur=conn.cursor()
-    cur.execute('UPDATE news SET date="{0}", title="{1}", body="{2}", type="{3}" WHERE id = "{4}"'.format(date, title, body, type, id))
+    cur.execute('UPDATE news SET date=?, title=?, body=?, type=? WHERE id = ?', (date, title, body, type, id))
     conn.commit()
     conn.close()
     return redirect(url_for('administrator.post'))
