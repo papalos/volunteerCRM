@@ -75,9 +75,28 @@ def cabinet(action):
         else:
             sort='date DESC'
 
-        # Делаем выборку событий в которх зарегистрировался пользователь с id сохранным в сессии из таблицы Регистриция
+        # Делаем выборку событий в которых зарегистрировался пользователь с id сохранным в сессии из таблицы Регистриция
         # Из таблицы События выбираем события с id_evt  не входящим в первую выборку, т.е. те на которые данный пользователь еще не регистрировался
         cur = cur.execute("SELECT * FROM event WHERE id_evt NOT IN (SELECT id_evt FROM registration WHERE id_prsn ={0}) AND date(date) > date('now') ORDER BY {1}".format(session['id'], sort))
+        # Из таблицы Регистрации выбираем зарегистрированных на это событие и считаем их количество
+        #---------дописать код
+        curII = conn.cursor()
+        curII.execute("SELECT id_evt, role FROM registration WHERE id_evt IN (SELECT id_evt FROM event WHERE date(date) > date('now'))".format(session['id'])) #
+        role_dict={}
+        for x in curII:
+            if role_dict.get(x[0]):
+                if role_dict.get(x[0]).get(x[1]):
+                    role_dict[x[0]][x[1]] += 1
+                else:
+                    role_dict[x[0]][x[1]] = 1
+            else:
+                role_dict[x[0]] = {x[1]:1}
+
+
+        print(role_dict)
+        #---------дописать код
+
+
         # формируем переменную контент из строк вышеуказанной выборки
         content = '<p>Предстоящие события, доступные для регистрации</p><table class="table table-striped"><col width="20%"><col width="20%"><col width="15%"><col width="10%"><col width="20%"><col width="15%"> <thead><th><a href="/us/cabinet/nextevt?srt=event">Событие</a></th><th><a href = "/us/cabinet/nextevt?srt=activity">Активность/Предмет</a></th><th><a href="/us/cabinet/nextevt">Дата</a></th><th>Время явки</th><th>Адрес</th><th></th></thead><tbody>'
         for row in cur:

@@ -3,7 +3,7 @@ import sqlite3                                                                  
 from datetime import date, timedelta                                                         # класс для работы с датой
 import random                                                                                # для генерации случайных чисел
 import mail                                                                                  # отправка сообщения для подтверждения регистрации
-import checker                                                                               # проверки
+import checker                                                                               # проверяет, что на сайте авторизированный пользователь
 from admin.admin import panel
 from user.user import cabin
 
