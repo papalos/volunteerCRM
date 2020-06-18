@@ -79,7 +79,7 @@ def cabinet(action):
         # Из таблицы События выбираем события с id_evt  не входящим в первую выборку, т.е. те на которые данный пользователь еще не регистрировался
         cur = cur.execute("SELECT * FROM event WHERE id_evt NOT IN (SELECT id_evt FROM registration WHERE id_prsn ={0}) AND date(date) > date('now') ORDER BY {1}".format(session['id'], sort))
         # Из таблицы Регистрации выбираем зарегистрированных на это событие и считаем их количество
-        #---------дописать код
+        # формируем список role_dict вида {18: {'аудитория': 8, 'штаб': 4}, 5: {'аудитория': 1}}
         curII = conn.cursor()
         curII.execute("SELECT id_evt, role FROM registration WHERE id_evt IN (SELECT id_evt FROM event WHERE date(date) > date('now'))".format(session['id'])) #
         role_dict={}
@@ -92,23 +92,42 @@ def cabinet(action):
             else:
                 role_dict[x[0]] = {x[1]:1}
 
-
-        print(role_dict)
-        #---------дописать код
-
-
         # формируем переменную контент из строк вышеуказанной выборки
-        content = '<p>Предстоящие события, доступные для регистрации</p><table class="table table-striped"><col width="20%"><col width="20%"><col width="15%"><col width="10%"><col width="20%"><col width="15%"> <thead><th><a href="/us/cabinet/nextevt?srt=event">Событие</a></th><th><a href = "/us/cabinet/nextevt?srt=activity">Активность/Предмет</a></th><th><a href="/us/cabinet/nextevt">Дата</a></th><th>Время явки</th><th>Адрес</th><th></th></thead><tbody>'
+        content = '<p>Предстоящие события. <br> <span style="color:red">Красным цветом выделены события регистрация на которые завершена</span>, при желании вы можете добавиться в резерв, если место освободиться вы будете информированы об этом</p><table class="table table-striped"><col width="20%"><col width="20%"><col width="15%"><col width="10%"><col width="20%"><col width="15%"> <thead><th><a href="/us/cabinet/nextevt?srt=event">Событие</a></th><th><a href = "/us/cabinet/nextevt?srt=activity">Активность/Предмет</a></th><th><a href="/us/cabinet/nextevt">Дата</a></th><th>Время явки</th><th>Адрес</th><th></th></thead><tbody>'
         for row in cur:
             ls = row[3].split('-')
             ls = int(''.join(ls))
             if (ls>int(''.join(date.today().isoformat().split('-')))):
-                reg = '<a href=/us/registration_view/{}>Зарегистрироваться</a>'.format(row[0])
-                content += '<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td><td>{4}</td><td>{5}</td></tr>'.format( row[1],row[2],row[3],row[4],row[11],reg)
+                # Проверяем есть ли свободные места
+                if row[10] > role_dict[row[0]].get('аудитория', 0) and row[8] > role_dict[row[0]].get('штаб', 0):
+                    style = 'style = "color:black;"'
+                    reg = '<a href="/us/registration_view/{}">Зарегистрироваться</a>'.format(row[0])
+                else:
+                    style = 'style = "color:red;"'
+                    reg = '<a href="/us/reserve/{}">Резерв</a>'.format(row[0])
+                content += '<tr {style}><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td><td>{4}</td><td>{reg}</td></tr>'.format( row[1],row[2],row[3],row[4],row[11],reg=reg, style=style)
         content += '</tbody></table>'
     # Закрываем БД и выводим шаблон ЛК передавая ФИО пользователя и контент для отображения на странице
     conn.close()
     return render_template('cabinet.html', volonteer=volonteer, content=content, bold=bold)
+
+# Личный кабинет - резервирование на мероприятии
+@cabin.route('/reserve/<id_evt>', methods=['GET', 'POST'])
+def reserve(id_evt):
+    if(session.get('id') is None):
+        return 'Ошибка идентификации вернитесь на <a href="{}">главную страницу</a>'.format(url_for('index'))
+    conn = sqlite3.connect("sql/volonteer.db")    
+    cur = conn.cursor()
+    curI = conn.cursor()
+    row = cur.execute('SELECT id_prsn, email FROM person WHERE id_prsn={}'.format(session['id'])).fetchone()
+    print(row)
+    curI.execute('INSERT INTO reserve (id_evt, id_prsn, email) VALUES (?, ?, ?)', (id_evt, row[0], row[1]))
+    conn.commit()
+    # ---------------- Далее все поменять ____________________
+        
+    conn.close()
+
+    return redirect(url_for('user.cabinet', action='nextevt'))
 
 # Личный кабинет - регистрация пользователя на событие внешний вид
 @cabin.route('/registration_view/<id_evt>', methods=['GET', 'POST'])
@@ -136,6 +155,7 @@ def registration_view(id_evt):
     conn.close()
 
     return  render_template('registration_view.html', volonteer=volonteer, event=event, num_staff = num_staff, num_classroom = num_classroom)
+
 
 # Личный кабинет - регистрация пользователя на событие
 @cabin.route('/registration', methods=['GET', 'POST'])
