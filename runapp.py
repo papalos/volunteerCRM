@@ -4,6 +4,7 @@ from datetime import date, timedelta                                            
 import random                                                                                # для генерации случайных чисел
 import mail                                                                                  # отправка сообщения для подтверждения регистрации
 import checker                                                                               # проверяет, что на сайте авторизированный пользователь
+from noneisnull import nulling
 from admin.admin import panel
 from user.user import cabin
 
@@ -31,6 +32,15 @@ def index():
     cur.execute('SELECT * FROM news ORDER BY date DESC LIMIT 10')
     news = cur.fetchall()
     return render_template('index.html', news=news)
+
+# Отображение свободных мест в реальном времени
+@app.route('/real_time')
+def real_time():
+    conn = sqlite3.connect('sql/volonteer.db')
+    cur=conn.cursor()
+    events = cur.execute('SELECT event.id_evt, event, activity, date, staff_max, classroom_max, COUNT(event.id_evt) FROM event JOIN registration ON event.id_evt = registration.id_evt GROUP BY event.id_evt').fetchall()
+    events = [(x[1], x[2], x[3], nulling(x[4])+nulling(x[5])-nulling(x[6])) for x in events]
+    return render_template('real_time.html', events = events)
 
 # О нас
 @app.route('/about')

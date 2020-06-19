@@ -75,13 +75,15 @@ def cabinet(action):
         else:
             sort='date DESC'
 
-        # Делаем выборку событий в которых зарегистрировался пользователь с id сохранным в сессии из таблицы Регистриция
+        # Делаем выборку событий, в которых зарегистрировался пользователь с id сохраненным в сессии из таблицы Регистриция
         # Из таблицы События выбираем события с id_evt  не входящим в первую выборку, т.е. те на которые данный пользователь еще не регистрировался
-        cur = cur.execute("SELECT * FROM event WHERE id_evt NOT IN (SELECT id_evt FROM registration WHERE id_prsn ={0}) AND date(date) > date('now') ORDER BY {1}".format(session['id'], sort))
+        cur = cur.execute("SELECT * FROM event WHERE id_evt NOT IN (SELECT id_evt FROM registration WHERE id_prsn ={0}) AND date(date) > date('now') ORDER BY {1}".format(session['id'], sort)).fetchall()
+        id_events = tuple(x[0] for x in cur)
+        
         # Из таблицы Регистрации выбираем зарегистрированных на это событие и считаем их количество
         # формируем список role_dict вида {18: {'аудитория': 8, 'штаб': 4}, 5: {'аудитория': 1}}
         curII = conn.cursor()
-        curII.execute("SELECT id_evt, role FROM registration WHERE id_evt IN (SELECT id_evt FROM event WHERE date(date) > date('now'))".format(session['id'])) #
+        curII.execute("SELECT id_evt, role FROM registration WHERE id_evt IN {}".format(id_events))
         role_dict={}
         for x in curII:
             if role_dict.get(x[0]):
@@ -92,19 +94,37 @@ def cabinet(action):
             else:
                 role_dict[x[0]] = {x[1]:1}
 
+
         # формируем переменную контент из строк вышеуказанной выборки
         content = '<p>Предстоящие события. <br> <span style="color:red">Красным цветом выделены события регистрация на которые завершена</span>, при желании вы можете добавиться в резерв, если место освободиться вы будете информированы об этом</p><table class="table table-striped"><col width="20%"><col width="20%"><col width="15%"><col width="10%"><col width="20%"><col width="15%"> <thead><th><a href="/us/cabinet/nextevt?srt=event">Событие</a></th><th><a href = "/us/cabinet/nextevt?srt=activity">Активность/Предмет</a></th><th><a href="/us/cabinet/nextevt">Дата</a></th><th>Время явки</th><th>Адрес</th><th></th></thead><tbody>'
+        # Из таблицы События выбираем события с id_evt на которые данный пользователь еще не регистрировался
         for row in cur:
             ls = row[3].split('-')
             ls = int(''.join(ls))
             if (ls>int(''.join(date.today().isoformat().split('-')))):
-                # Проверяем есть ли свободные места
+                # Проверяем есть ли свободные места, role_dict содержит количество зарегистрированных на мероприятие по ролям
                 if row[10] > role_dict[row[0]].get('аудитория', 0) and row[8] > role_dict[row[0]].get('штаб', 0):
+                    # Если есть даем возможность зарегистрироваться
                     style = 'style = "color:black;"'
                     reg = '<a href="/us/registration_view/{}">Зарегистрироваться</a>'.format(row[0])
                 else:
+                    # Иначе проверяем есть ли этот волонтер в резерве
                     style = 'style = "color:red;"'
-                    reg = '<a href="/us/reserve/{}">Резерв</a>'.format(row[0])
+                    curIII = conn.cursor()
+                    curIII.execute("SELECT * FROM reserve WHERE id_prsn = {} LIMIT 1".format(session['id']))
+                    if len(curIII.fetchall()) != 0:
+                        # Если есть сообщаем ему об этом
+                        reg = '<span>Вы в резерве</span>'
+                    else:
+                        # Иначе проверяем есть ли свободные места в резерве (ограничим их 10-ю на каждое событие)
+                        curIV = conn.cursor()
+                        count = curIV.execute("SELECT COUNT(id_evt) FROM reserve WHERE id_evt = {}".format(row[0])).fetchone()[0]
+                        if count > 10:
+                            # Если нет сообщаем ему об этом
+                            reg = '<span>Резерв набран</span>'
+                        else:
+                            # Иначе есть даем возможность добавиться в резерв
+                            reg = '<a href="/us/reserve/{}">Резерв</a>'.format(row[0])
                 content += '<tr {style}><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td><td>{4}</td><td>{reg}</td></tr>'.format( row[1],row[2],row[3],row[4],row[11],reg=reg, style=style)
         content += '</tbody></table>'
     # Закрываем БД и выводим шаблон ЛК передавая ФИО пользователя и контент для отображения на странице
@@ -120,13 +140,9 @@ def reserve(id_evt):
     cur = conn.cursor()
     curI = conn.cursor()
     row = cur.execute('SELECT id_prsn, email FROM person WHERE id_prsn={}'.format(session['id'])).fetchone()
-    print(row)
     curI.execute('INSERT INTO reserve (id_evt, id_prsn, email) VALUES (?, ?, ?)', (id_evt, row[0], row[1]))
     conn.commit()
-    # ---------------- Далее все поменять ____________________
-        
     conn.close()
-
     return redirect(url_for('user.cabinet', action='nextevt'))
 
 # Личный кабинет - регистрация пользователя на событие внешний вид
