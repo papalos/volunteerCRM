@@ -46,32 +46,6 @@ def real_time():
     events = [(x[1], x[2], x[3], nulling(x[4])+nulling(x[5])-nulling(x[6])) for x in events]
     return render_template('real_time.html', events = events)
 
-# Новости подтягиваемые из ВК
-@app.route('/news_get')
-def news_get():
-    # !!! (ДОПИСАТЬ СКРИПТ ПОЛУЧЕНИЯ ТОКЕНА)
-    ls = []
-    r = urlopen('https://api.vk.com/method/wall.get?owner_id=-51217336&count=5&filter=owner&extended=0&v=5.110&access_token=6aa64a5dcf5a2bdf3e575788d80e255248f9afa8a48c9972add0f87547033b58e0b624326416c5032ca36') 
-    j = json.loads(r.read().decode('utf-8'))
-    for i in j['response']['items']:
-        out ={}
-        out['text'] = i.get('text').replace('\n','<br>')
-        out['date'] = datetime.fromtimestamp(i.get('date')).strftime("%A, %B %d, %Y %I:%M:%S")
-        if i.get('copy_history'):
-            out['dop'] = i.get('copy_history')[0].get('text').replace('\n','<br>')
-        at = i.get('attachments')
-        if at:
-            link = at[0].get('link')
-            if link:
-                out['link'] = link.get('url')
-                out['title_link'] = link.get('title')
-            photo = at[0].get('photo')
-            if photo:
-                out['photo_src'] = photo.get('sizes')[0].get('url')
-        ls.append(out)
-    print(ls)
-    return render_template('news_get.html', posts=ls)
-
 # О нас
 @app.route('/about')
 def about():
