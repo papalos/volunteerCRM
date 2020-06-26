@@ -83,7 +83,6 @@ def cabinet(action):
         # Из таблицы Регистрации выбираем зарегистрированных на это событие и считаем их количество
         # формируем список role_dict вида {18: {'аудитория': 8, 'штаб': 4}, 5: {'аудитория': 1}}
         curII = conn.cursor()
-        print(id_events)
         curII.execute("SELECT id_evt, role FROM registration WHERE id_evt IN {}".format(id_events + tuple('-1'))) #+tuple('-1') передача в кортеже одного элемента вызывает ошибку
         role_dict={}
         for x in curII:

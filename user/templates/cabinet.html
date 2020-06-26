@@ -5,7 +5,11 @@
     <h3 class="mb-4">Личный кабинет</h3>
 
     <div class="name bg-dark text-light p-2">Здравствуйте, {{volonteer[1]}} {{volonteer[2]}} {{volonteer[3]}}</div>
-
+    <div class="bg-info text-light p-2">
+            дата рождения: {{volonteer[7]}}<br />
+            email: {{volonteer[5]}}; телефон: {{volonteer[6]}}<br />
+            образовательная программа: {{volonteer[4]}} 
+    </div>
     <div class="rule_menu m-2">
         <a href="/us/cabinet/nextevt" {% if bold==1 %} style="font-weight: bold" {% endif %}>Предстоящие события</a> |
         <a href="/us/cabinet/regevt" {% if bold==2 %} style="font-weight: bold" {% endif %}>Мои предстоящие события</a> |
