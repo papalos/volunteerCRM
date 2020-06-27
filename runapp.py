@@ -5,7 +5,6 @@ import random                                                                   
 import mail                                                                                  # отправка сообщения для подтверждения регистрации
 import checker                                                                               # проверяет, что на сайте авторизированный пользователь
 from noneisnull import nulling                                                               # преобразует None к нулю
-from urllib.request import urlopen                                                           # Для работы с API закросы по url к другим сайтам
 import json
 from admin.admin import panel                                                                # Подключение Блюпринта администратора
 from user.user import cabin                                                                  # Подключение Блюпринта волонтера
