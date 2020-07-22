@@ -23,9 +23,10 @@ def cabinet(action):
     cur.execute('SELECT * FROM person WHERE id_prsn={}'.format(session['id']))
     # Сохраняем ФИО в переменную для передачи его в шаблон
     volonteer = cur.fetchone()
+    fio = '_'.join(volonteer[1:4])
 
-    if (action=='lastevt'):# отображается когда запрашиваются события которые посетил пользователь
-        bold=3
+    if action == 'lastevt':# отображается когда запрашиваются события которые посетил пользователь
+        bold = 3
         # Получаем пересекающиеся данные из таблиц События и Регистрации
         # и выбираем из них только те, которые посетил пользователь с id записанным в сессию
         cur = cur.execute('SELECT event.id_evt, event.event, event.activity, event.date FROM event JOIN registration ON event.id_evt=registration.id_evt WHERE registration.id_prsn={} AND registration.visit =1'.format(session['id']))
@@ -34,14 +35,14 @@ def cabinet(action):
         # Перебираем все полученные записи
         for row in cur:
             # формируем код подтверждения посещения состоит из id события, даты события, id участника
-            a,b,c = row[3].split('-')
-            ls = (str(row[0]),str(int(c)),str(int(a)-2010),str(session['id']),str(int(b)))
+            a, b, c = row[3].split('-')
+            ls = (str(row[0]), str(int(c)), str(int(a)-2010), str(session['id']), str(int(b)))
             code = '-'.join(ls)
             # формируем строки таблицы только из тех событий даты которых больше текущей даты
-            content += '<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td></tr>'.format( row[1],row[2],row[3],code)
+            content += '<tr><td>{0}</td><td>{1}</td><td>{2}</td><td><a href="{4}" target="_blank">Получить справку</a></td></tr>'.format(row[1], row[2], row[3], code, url_for('user.gen_pdf', code=code, fio=fio))
         content += '</tbody></table>'
-    elif (action=='regevt'): # отображается когда запрашивается события на которые зарегистрирован пользователь
-        bold=2
+    elif action == 'regevt': # отображается когда запрашивается события на которые зарегистрирован пользователь
+        bold = 2
         # Получаем пересекающиеся данные из таблиц События и Регистрации
         # и выбираем из них только те, на которые зарегистрирован пользователь с id записанным в сессию и время проведения больше или равно текущему
         cur = cur.execute("SELECT event.id_evt, event.event, event.activity, event.date, event.time_in, event.address, registration.role FROM event JOIN registration ON event.id_evt=registration.id_evt WHERE registration.id_prsn={} AND date(date) >= date('now')".format(session['id']))
@@ -202,8 +203,18 @@ def unregistration(id_evt):
     
     return redirect(url_for('user.cabinet', action='regevt'))
 
+
 # Личный кабинет - Отмена регистрации пользователя на событие
 @cabin.route('/cancel_registration/<id_evt>', methods=['GET', 'POST'])
 def cancel_registration(id_evt):
-    
     return render_template("cancel_registration.html", id_evt=id_evt)
+
+
+# Генерирует pdf со справкой
+@cabin.route('/gen_pdf/<code>/<fio>')
+def gen_pdf(code, fio):
+    id_evt, day, year, id_user, month = code.split("-")
+    evt_date = '{}.{}.{}'.format(day, month, int(year)+2010)
+    fio = ' '.join(fio.replace('_-', ' ').split('_'))
+
+    return render_template('generate_pdf.html', fio=fio, evt_date=evt_date, code=code)
