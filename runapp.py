@@ -306,6 +306,32 @@ def cabinetin():
                         </html>'''
 
 
+# Верификация кода со справки
+@app.route('/vern')
+def vern():
+    message = ''
+    code = request.args.get('code')
+    if code is None:
+        code = '4-12-45-2-8'
+    else:
+        id_evt, _, _, id_prsn, _ = code.split("-")
+        conn = sqlite3.connect("sql/volonteer.db")
+        cur = conn.cursor()
+        cur.execute('SELECT visit FROM registration WHERE id_prsn = ? and id_evt = ?', (id_prsn, id_evt))
+        reg = cur.fetchone()
+        if (int(reg[0]) if reg is not None else 0) > 0:
+            fio = cur.execute('SELECT surname_prsn, name_prsn, patronymic_prsn  FROM person WHERE id_prsn = ?', (id_prsn,)).fetchone()
+            evt = cur.execute('SELECT activity, date  FROM event WHERE id_evt = ?', (id_evt,)).fetchone()
+            fio = ' '.join(fio)
+            message = '{} {} принял участие в мероприятии "{}" в качестве волонтера'.format(fio, evt[1], evt[0])
+        else:
+            message = 'Данный код не действителен'
+        # Пишем здесь __________________________________________
+
+    return render_template('vern.html', message=message, code=code)
+
+
+
 # ------------- test
 @app.route('/test')
 def test():
