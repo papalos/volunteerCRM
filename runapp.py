@@ -1,13 +1,12 @@
-from flask import Flask, render_template, request, redirect, url_for, session, send_file  # инструменты Flask
-import sqlite3  # для работы с БД SQLite
-from datetime import date, timedelta, datetime  # класс для работы с датой
-import random  # для генерации случайных чисел
-import mail  # отправка сообщения для подтверждения регистрации
-import checker  # проверяет, что на сайте авторизированный пользователь
-from noneisnull import nulling  # преобразует None к нулю
-import json
-from admin.admin import panel  # Подключение Блюпринта администратора
-from user.user import cabin  # Подключение Блюпринта волонтера
+from flask import Flask, render_template, request, redirect, url_for, session   # инструменты Flask
+import sqlite3                                                                  # для работы с БД SQLite
+from datetime import date, timedelta                                            # класс для работы с датой
+import random                                                                   # для генерации случайных чисел
+import mail                                                                     # отправка сообщения для подтверждения регистрации
+import checker                                                                  # проверяет, что на сайте админ
+from noneisnull import nulling                                                  # преобразует None к нулю
+from admin.admin import panel                                                   # Подключение Блюпринта администратора
+from user.user import cabin                                                     # Подключение Блюпринта волонтера
 
 app = Flask(__name__)
 # Время жизни сессии
@@ -39,7 +38,8 @@ def real_time():
     conn = sqlite3.connect('sql/volonteer.db')
     cur = conn.cursor()
     events = cur.execute(
-        'SELECT event.id_evt, event, activity, date, staff_max, classroom_max, COUNT(event.id_evt) FROM event JOIN registration ON event.id_evt = registration.id_evt GROUP BY event.id_evt').fetchall()
+        'SELECT event.id_evt, event, activity, date, staff_max, classroom_max, COUNT(event.id_evt) FROM event JOIN registration ON event.id_evt = registration.id_evt GROUP BY event.id_evt'
+    ).fetchall()
     events = [(x[1], x[2], x[3], nulling(x[4]) + nulling(x[5]) - nulling(x[6])) for x in events]
     return render_template('real_time.html', events=events)
 
@@ -249,7 +249,7 @@ def cabinetin():
     login = request.form['login']
     password = request.form['password']
 
-    # Если вход выполнил администратор (тест)    
+    # Если вход выполнил администратор
     if checker.pswAdm(login, password):
         # Сохраняем id администратора в сессии
         session['id'] = 'admin'
@@ -333,20 +333,21 @@ def vern():
 
 
 # ------------- test
-@app.route('/test')
-def test():
-    # Подключаемся к БД
-    conn = sqlite3.connect("sql/volonteer.db")
-    cur = conn.cursor()
 
-    # Делаем выборку всех записей из таблицы Пользователей
-    cur.execute("SELECT date FROM event WHERE date(date) > date('now')")
-    persons = cur.fetchall()
-
-    conn.close()
-
-    # Если записи не были найдены возвращаем пользователя на главную страницу.
-    return str(persons)
+# @app.route('/test')
+# def test():
+#     # Подключаемся к БД
+#     conn = sqlite3.connect("sql/volonteer.db")
+#     cur = conn.cursor()
+#
+#     # Делаем выборку всех записей из таблицы Пользователей
+#     cur.execute("SELECT date FROM event WHERE date(date) > date('now')")
+#     persons = cur.fetchall()
+#
+#     conn.close()
+#
+#     # Если записи не были найдены возвращаем пользователя на главную страницу.
+#     return str(persons)
 
 
 # ----------------------- Конец скрипта ------------------------ #

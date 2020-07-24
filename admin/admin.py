@@ -1,9 +1,7 @@
-from flask import Blueprint, Flask, render_template, request, redirect, url_for, session, send_file     # инструменты Flask
+from flask import Blueprint, render_template, request, redirect, url_for, session, send_file     # инструменты Flask
 import sqlite3                                                                    # для работы с БД SQLite
-from datetime import date, timedelta                                              # класс для работы с датой
-import random                                                                     # для генерации случайных чисел
+from datetime import date                                                         # класс для работы с датой
 import mail                                                                       # отправка сообщения для подтверждения регистрации
-# import checker                                                                  # проверки
 import xlsxwriter                                                                 # создание документа .xmlx
 
 
@@ -659,7 +657,7 @@ def getdata():
     length = len(all)
 
     # Создаем книку и лист.
-    workbook = xlsxwriter.Workbook('registr.xlsx')
+    workbook = xlsxwriter.Workbook('registr.xlsx', attachment_filename='registr.xlsx')
     worksheet = workbook.add_worksheet()
     
     # Заносим данные в таблицу
@@ -681,7 +679,7 @@ def getdata():
     workbook.close()
 
     try:
-        send = send_file('registr.xlsx', cache_timeout=0)
+        send = send_file('registr.xlsx', cache_timeout=0, attachment_filename='registr.xlsx', as_attachment=True)
     except:
         send='Ошибка создания файла!'
     finally:
@@ -723,7 +721,7 @@ def getallusers():
     workbook.close()
 
     try:
-        send = send_file('allusers.xlsx', cache_timeout=0)
+        send = send_file('allusers.xlsx', cache_timeout=0, attachment_filename='allusers.xlsx', as_attachment=True)
     except:
         send='Ошибка создания файла!'
     finally:
@@ -767,7 +765,7 @@ def getsomeevents():
     workbook.close()
 
     try:
-        send = send_file('someevents.xlsx', cache_timeout=0)
+        send = send_file('someevents.xlsx', cache_timeout=0, attachment_filename='someevents.xlsx', as_attachment=True)
     except:
         send='Ошибка создания файла!'
     finally:
@@ -826,7 +824,7 @@ def getuserregistronevent(id_evt):
     workbook.close()
 
     try:
-        send = send_file('userregistronevent.xlsx', cache_timeout=0)
+        send = send_file('userregistronevent.xlsx', cache_timeout=0, attachment_filename='userregistronevent.xlsx', as_attachment=True)
     except:
         send='Ошибка создания файла!'
     finally:
@@ -868,7 +866,7 @@ def getvisit(id_evt):
     workbook.close()
 
     try:
-        send = send_file('uservisit.xlsx', cache_timeout=0)
+        send = send_file('uservisit.xlsx', cache_timeout=0, attachment_filename='uservisit.xlsx', as_attachment=True)
     except:
         send='Ошибка создания файла!'
     finally:
@@ -881,4 +879,4 @@ def getvisit(id_evt):
 def backupdb():
     if session.get('id') != 'admin':
         return PAGE_ERROR_ENTER
-    return send_file('sql/volonteer.db', cache_timeout=0)
+    return send_file('sql/volonteer.db', cache_timeout=0, attachment_filename='volonteer.db', as_attachment=True)

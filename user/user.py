@@ -1,10 +1,6 @@
-from flask import Blueprint, Flask, render_template, request, redirect, url_for, session, send_file     # инструменты Flask
-import sqlite3                                                                    # для работы с БД SQLite
-from datetime import date, timedelta                                              # класс для работы с датой
-import random                                                                     # для генерации случайных чисел
-# import mail                                                                       # отправка сообщения для подтверждения регистрации
-# import checker                                                                    # проверки
-import xlsxwriter                                                                 # создание документа .xmlx
+from flask import Blueprint, render_template, request, redirect, url_for, session     # инструменты Flask
+import sqlite3                                                                        # для работы с БД SQLite
+from datetime import date                                                             # класс для работы с датой
 
 
 cabin = Blueprint('user', __name__, template_folder='templates')
