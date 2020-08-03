@@ -636,11 +636,11 @@ def getdata():
     if session.get('id') != 'admin':
         return PAGE_ERROR_ENTER
 
-    conn=sqlite3.connect('sql/volonteer.db')
+    conn = sqlite3.connect('sql/volonteer.db')
     cur = conn.cursor()
     _since = request.form.get('since')
     _to = request.form.get('to')
-    if(_since==None and _to==None):
+    if(_since == None and _to == None):
         cur.execute('''SELECT ev.id_evt, ev.event, ev.activity, ev.date, ev.time_start,  ev.duration, ev.address, p.id_prsn, p.surname_prsn, p.name_prsn, p.patronymic_prsn, p.faculty, p.email, p.phone, p.birthday, p.sex, p.year_st, reg.visit, reg.role, reg.classroom
                    FROM registration AS reg 
                    JOIN person AS p ON reg.id_prsn = p.id_prsn
@@ -657,7 +657,7 @@ def getdata():
     length = len(all)
 
     # Создаем книку и лист.
-    workbook = xlsxwriter.Workbook('registr.xlsx', attachment_filename='registr.xlsx')
+    workbook = xlsxwriter.Workbook('registr.xlsx')
     worksheet = workbook.add_worksheet()
     
     # Заносим данные в таблицу
@@ -681,7 +681,7 @@ def getdata():
     try:
         send = send_file('registr.xlsx', cache_timeout=0, attachment_filename='registr.xlsx', as_attachment=True)
     except:
-        send='Ошибка создания файла!'
+        send = 'Ошибка создания файла!'
     finally:
         conn.close()
     return send
