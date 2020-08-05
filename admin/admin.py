@@ -207,6 +207,16 @@ def extraregsave():
     return redirect(url_for('administrator.index_adm'))
 
 
+# Просмотр таблицы резервистов
+@panel.route('/reserve')
+def reserve():
+    conn = sqlite3.connect("sql/volonteer.db")
+    cur = conn.cursor()
+    res = cur.execute("SELECT date, event, activity, id_prsn, email FROM reserve JOIN event ON reserve.id_evt = event.id_evt").fetchall()
+    conn.close()
+    return render_template('/reserve.html', res=res)
+
+
 # ----------------------------- Раздел с событиями -----------------------------------------------
 
 # Панель администратора (события) - выводит список всех событий
@@ -630,7 +640,7 @@ def delpost(id_new):
 # ----------------------------------------------------------- Отчеты -------------------------------------------------------------------------------
 
 # Выгружает всех зарегистрированных пользователей в виде excel файла
-@panel.route('/getdata', methods=['GET','POST'])
+@panel.route('/getdata', methods=['GET', 'POST'])
 def getdata():
     # является ли пользователь администратором
     if session.get('id') != 'admin':

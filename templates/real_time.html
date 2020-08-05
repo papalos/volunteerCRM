@@ -19,7 +19,11 @@
                 <div class="datenews small">{{evt[0]}}</div>
                 <h3 class="titlenews">{{evt[1]}}</h3>
                 <div class="datenews small">{{evt[2]}}</div>
-                <div class="bodynews">Осталось мест для регистрации <span style="color:red; font-weight:bold;">{{evt[3]}}</span></div>
+                <div class="bodynews">Осталось мест для регистрации
+                    <span style="color:red; font-weight:bold;">
+                        {% if evt[3] < 0 %} 0 {% else %} {{evt[3]}} {% endif %}
+                    </span>
+                </div>
             </div>
         </div>
         {% endfor %}
