@@ -6,7 +6,9 @@
 <div class="container">
 <h2 class="m-2">О нас</h2>
 <div class="news">
-    <div class="media border rounded-right m-2 p-2">        <!---->
+    <div class="media border rounded-right m-2 p-2">
+        {{ content | safe}}
+        <!--
         <div>
             <p>Мы занимаемся проведением олимпиад и конкурсов НИУ ВШЭ для <a href="//olymp.hse.ru/mmo" target="_blank">школьников</a> и <a href="//olymp.hse.ru/ma" target="_blank">студентов</a>.</p>
             <p>Мы - это Дирекция по профессиональной ориентации и работе с одаренными учащимися.</p>
@@ -22,7 +24,8 @@
             <p>Основная потребность в волонтерах приходится на январь-февраль.</p>
             <p>Чтобы присоединиться к рядам волонтеров и быть в курсе предстоящих событий, <a href="{{url_for('person')}}">зарегистрируйтесь</a> в системе.</p>
             <p><strong>Следите за новостями в сообществе <a href="//vk.com/hsevolunteers" target="_blank">волонтеров олимпиад</a>!</strong></p>
-        </div>        
+        </div>
+        -->
     </div>
 </div>
 </div>

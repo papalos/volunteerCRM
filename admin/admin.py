@@ -210,11 +210,47 @@ def extraregsave():
 # Просмотр таблицы резервистов
 @panel.route('/reserve')
 def reserve():
+    # является ли пользователь администратором
+    if session.get('id') != 'admin':
+        return PAGE_ERROR_ENTER
+
     conn = sqlite3.connect("sql/volonteer.db")
     cur = conn.cursor()
     res = cur.execute("SELECT date, event, activity, id_prsn, email FROM reserve JOIN event ON reserve.id_evt = event.id_evt").fetchall()
     conn.close()
     return render_template('/reserve.html', res=res)
+
+# Просмотр текста страниц
+@panel.route('/pages')
+def pages():
+    # является ли пользователь администратором
+    if session.get('id') != 'admin':
+        return PAGE_ERROR_ENTER
+
+    conn = sqlite3.connect("sql/volonteer.db")
+    cur = conn.cursor()
+    text = cur.execute("SELECT * FROM pages").fetchall()
+    conn.close()
+    return render_template('/text_page.html', text=text)
+
+
+# Изменения страниц и рассылок
+@panel.route('/change_page', methods=['GET','POST'])
+def change_page():
+    # является ли пользователь администратором
+    if session.get('id') != 'admin':
+        return PAGE_ERROR_ENTER
+
+    place = request.form.get('place')
+    theme = request.form.get('theme')
+    body = request.form.get('body')
+
+    conn=sqlite3.connect("sql/volonteer.db")
+    cur=conn.cursor()
+    cur.execute('UPDATE pages SET theme = ?, body = ? WHERE place = ?', (theme, body, place))
+    conn.commit()
+    conn.close()
+    return redirect(url_for('administrator.post'))
 
 
 # ----------------------------- Раздел с событиями -----------------------------------------------

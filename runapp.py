@@ -47,7 +47,10 @@ def real_time():
 # О нас
 @app.route('/about')
 def about():
-    return render_template('about.html')
+    conn = sqlite3.connect('sql/volonteer.db')
+    cur = conn.cursor()
+    content = cur.execute('SELECT body FROM pages WHERE place = "about"').fetchone()[0]
+    return render_template('about.html', content=content)
 
 
 # Контакты
