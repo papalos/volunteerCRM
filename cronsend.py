@@ -45,8 +45,14 @@ def send(destination, name_evt):
     fp.close()
 
     # Создаем тело сообщения
-    msg = MIMEText('Привет! \n\nНа мероприятии "{}", находящимся у вас врезерве, появились свободные места'.format(name_evt), 'plain', 'utf-8')
-    msg['Subject'] = Header('Освободились места для регистрации', 'utf-8')
+    conn = sqlite3.connect("sql/volonteer.db")
+    cursor = conn.cursor()
+    # По списку событий ищем сколько на них зарегистрированно
+    cursor.execute("SELECT theme, body FROM registration WHERE place = 'reserve_send'")
+    text = cursor.fetchone()
+    conn.close()
+    msg = MIMEText(text[1].format(event=name_evt), 'plain', 'utf-8')
+    msg['Subject'] = Header(text[0], 'utf-8')
     msg['From'] = login
     msg['To'] = destination
     

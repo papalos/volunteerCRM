@@ -54,6 +54,7 @@ def index_adm():
         return PAGE_ERROR_ENTER
     return render_template('admn.html')
 
+
 # Панель администратора (пользователь) - все пользователи (выводит всех пользователей из постоянной таблицы person
 @panel.route('/allusers')
 def allusers():
@@ -72,7 +73,9 @@ def allusers():
     conn.close()
     return render_template('allusers.html', persons=persons)
 
-# Панель администратора (без регистрации) - не завершившие регистрацию (выводит всех пользователей из временной таблицы temp_user)
+
+# Панель администратора (без регистрации)
+# - не завершившие регистрацию (выводит всех пользователей из временной таблицы temp_user)
 @panel.route('/tempusers')
 def tempusers():
     # является ли пользователь администратором
@@ -86,16 +89,17 @@ def tempusers():
     conn.close()
     return render_template('tempusers.html', persons=persons)
 
+
 # Регистрация личного кабинета от имени администратора
 @panel.route('/confirm_adm/<hash>')
 def confirm_adm(hash):
-     # Соединение с БД
+    # Соединение с БД
     conn = sqlite3.connect("sql/volonteer.db")
     cur = conn.cursor()
     # Нахождение записи во временной таблице temp_user по коду в ссылке подтверждения
     cur.execute('SELECT * FROM temp_user WHERE hash="{}"'.format(hash))
     row = cur.fetchone()
-    if row==None: return '<span>Данный пользователь не обнаружен!</span><br /><a href="{}">Вернуться к временной таблице</a>'.format(url_for('administrator.tempusers'))
+    if row == None: return '<span>Данный пользователь не обнаружен!</span><br /><a href="{}">Вернуться к временной таблице</a>'.format(url_for('administrator.tempusers'))
     # Перезапись значений в постоянную таблицу person
     cur.execute('INSERT INTO person (surname_prsn, name_prsn, patronymic_prsn, faculty, email, phone, birthday, login, password, date_reg, sex, year_st) VALUES ("{0}", "{1}", "{2}", "{3}", "{4}", "{5}", "{6}", "{7}", "{8}", "{9}", "{10}", "{11}")'.format(row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12]))
     conn.commit()
@@ -107,7 +111,6 @@ def confirm_adm(hash):
     # отправить логин и пароль на почтовый адрес
     mail.send_passw(row[5], row[8], row[9], row[2])    
     return redirect(url_for('administrator.tempusers'))
-
 
 
 # Панель администратора (пользователь) - удаляет пользователя из постоянной таблицы person
@@ -126,13 +129,13 @@ def deluser():
     conn.close()
     return redirect(url_for('administrator.allusers'))
 
+
 # Открытие на редактирование данных указанного пользователя 
 @panel.route('/editperson/<id>')
 def editperson(id):
     # является ли пользователь администратором
     if session.get('id') != 'admin':
         return PAGE_ERROR_ENTER
-
 
     conn = sqlite3.connect("sql/volonteer.db")
     cur = conn.cursor()
@@ -141,20 +144,22 @@ def editperson(id):
     result=cur.fetchone()
     return render_template('personedit.html', result=result)
 
+
 # Сохранение в БД отредактированных данных пользователя
 @panel.route('/setedit', methods=['GET','POST'])
 def setedit():
-    id=request.form['id']
-    surname=request.form['surname']
-    name=request.form['name']
-    patronymic=request.form['patronymic']
-    birthday=request.form['birthday']
-    faculty=request.form['faculty']
-    email=request.form['email']
-    phone=request.form['phone']
-    login=request.form['login']
-    password=request.form['password']
-    sex=request.form['sex']
+    id = request.form['id']
+    surname = request.form['surname']
+    name = request.form['name']
+    patronymic = request.form['patronymic']
+    birthday = request.form['birthday']
+    faculty = request.form['faculty']
+    email = request.form['email']
+    phone = request.form['phone']
+    login = request.form['login']
+    password = request.form['password']
+    sex = request.form['sex']
+
     # Соединение с БД
     conn = sqlite3.connect("sql/volonteer.db")
     cur = conn.cursor()
@@ -175,24 +180,24 @@ def extraregistration(id):
     if session.get('id') != 'admin':
         return PAGE_ERROR_ENTER
 
-
     conn = sqlite3.connect("sql/volonteer.db")
     curI = conn.cursor()
     curII = conn.cursor()
 
     curI.execute("SELECT * FROM person WHERE id_prsn = ?", (id,))
     curII.execute("SELECT id_evt FROM event")
-    result=curI.fetchone()
-    evts=curII.fetchall()
+    result = curI.fetchone()
+    evts = curII.fetchall()
     return render_template('extraregistration.html', result=result, evts=evts)
+
 
 # Сохранение в БД сведений о дорегистрации пользователя
 @panel.route('/extraregsave', methods=['GET','POST'])
 def extraregsave():
-    id_prsn=request.form['id_prsn']
-    id_evt=request.form['id_evt']
-    role=request.form['role']
-    classroom=request.form['classroom']
+    id_prsn = request.form['id_prsn']
+    id_evt = request.form['id_evt']
+    role = request.form['role']
+    classroom = request.form['classroom']
 
     # Соединение с БД
     conn = sqlite3.connect("sql/volonteer.db")
@@ -220,6 +225,7 @@ def reserve():
     conn.close()
     return render_template('/reserve.html', res=res)
 
+
 # Просмотр текста страниц
 @panel.route('/pages')
 def pages():
@@ -245,8 +251,8 @@ def change_page():
     theme = request.form.get('theme')
     body = request.form.get('body')
 
-    conn=sqlite3.connect("sql/volonteer.db")
-    cur=conn.cursor()
+    conn = sqlite3.connect("sql/volonteer.db")
+    cur = conn.cursor()
     cur.execute('UPDATE pages SET theme = ?, body = ? WHERE place = ?', (theme, body, place))
     conn.commit()
     conn.close()
@@ -263,13 +269,13 @@ def event():
         return PAGE_ERROR_ENTER
     
     # Сортировка в столбцах таблицы
-    srt=request.args.get('srt')
-    if(srt=='event'):
-        sort='event'
-    elif(srt=='activity'):
-        sort='activity'
+    srt = request.args.get('srt')
+    if srt == 'event':
+        sort = 'event'
+    elif srt == 'activity':
+        sort = 'activity'
     else:
-        sort='date DESC'
+        sort = 'date DESC'
 
     conn = sqlite3.connect("sql/volonteer.db")
     cur = conn.cursor()
@@ -277,6 +283,7 @@ def event():
     events = cur.fetchall()
     conn.close()
     return render_template('event.html', events=events)
+
 
 # Панель администратора (события) - выводит список всех событий
 @panel.route('/event_add_html')
@@ -286,6 +293,7 @@ def event_add_html():
         return PAGE_ERROR_ENTER
     return render_template('event_add_html.html')
 
+
 # Панель администратора (события) - выполняет добавление нового события и редирект к списку всех событий
 @panel.route('/eventadd', methods=['GET', 'POST'])
 def eventadd():
@@ -293,29 +301,33 @@ def eventadd():
     if session.get('id') != 'admin':
         return PAGE_ERROR_ENTER
     
-    event=request.form['event']
-    activity=request.form['activity']
-    date=request.form['date']
-    time_in=request.form['time_in']
-    time_start=request.form['time_start']
-    duration=request.form['duration']
-    staff_min=request.form['staff_min']
-    staff_max=request.form['staff_max']
-    classroom_min=request.form['classroom_min']
-    classroom_max=request.form['classroom_max']
-    address=request.form['address']
+    event = request.form['event']
+    activity = request.form['activity']
+    date = request.form['date']
+    time_in = request.form['time_in']
+    time_start = request.form['time_start']
+    duration = request.form['duration']
+    staff_min = request.form['staff_min']
+    staff_max = request.form['staff_max']
+    classroom_min = request.form['classroom_min']
+    classroom_max = request.form['classroom_max']
+    address = request.form['address']
 
     # Соединение с БД
     conn = sqlite3.connect("sql/volonteer.db")
-    cur = conn.cursor()    
+    cur = conn.cursor()
+
     # Вставка записи в таблицу событий
     cur.execute("INSERT INTO event (event, activity, date, time_in, time_start, duration, staff_min, staff_max, classroom_min, classroom_max, address) VALUES ('" +event+ "', '" +activity+ "', '" +date+ "', '" +time_in+ "', '" +time_start+ "', '" +duration+ "', '" +staff_min+ "', '" +staff_max+ "', '" +classroom_min+ "', '" +classroom_max+ "', '" +address+ "')")
+
     # Фиксируем изменения в базе
     conn.commit()    
+
     # Закрываем соединение
     conn.close()
     
     return redirect(url_for('administrator.event'))
+
 
 # Панель администратора (события) - удаление события и редирект к списку событий
 @panel.route('/deletevt/<id>')
@@ -336,6 +348,7 @@ def deletevt(id):
     
     return redirect(url_for('administrator.event'))
 
+
 # Панель администратора (события) - редактирование события
 @panel.route('/changevt/<id>')
 def changevt(id):
@@ -352,24 +365,25 @@ def changevt(id):
     
     return render_template('event_change_html.html', event=test_str)
 
+
 # Панель администратора (события) - установка изменений в событии
 @panel.route('/eventsetchng', methods=['GET', 'POST'])
 def eventsetchng():
     # является ли пользователь администратором
     if session.get('id') != 'admin':
         return PAGE_ERROR_ENTER
-    id=request.form['id']
-    event=request.form['event']
-    activity=request.form['activity']
-    date=request.form['date']
-    time_in=request.form['time_in']
-    time_start=request.form['time_start']
-    duration=request.form['duration']
-    staff_min=request.form['staff_min']
-    staff_max=request.form['staff_max']
-    classroom_min=request.form['classroom_min']
-    classroom_max=request.form['classroom_max']
-    address=request.form['address']
+    id = request.form['id']
+    event = request.form['event']
+    activity = request.form['activity']
+    date = request.form['date']
+    time_in = request.form['time_in']
+    time_start = request.form['time_start']
+    duration = request.form['duration']
+    staff_min = request.form['staff_min']
+    staff_max = request.form['staff_max']
+    classroom_min = request.form['classroom_min']
+    classroom_max = request.form['classroom_max']
+    address = request.form['address']
 
     # Соединение с БД
     conn = sqlite3.connect("sql/volonteer.db")
@@ -382,6 +396,7 @@ def eventsetchng():
     conn.close()
     
     return redirect(url_for('administrator.event'))
+
 
 # Панель администратора (события) - статистика регистраций на событие, списки волонтеров зарегистрировавшихся на конкретное событие
 @panel.route('/stat/<id_evt>')
@@ -405,11 +420,11 @@ def stat(id_evt):
     
     conn.close()
 
-
-    # дописать тело. Показывает сколько человек зарегистрировалось на событие и вы водит поименный список с возможностью отмечать присутствие
     return render_template('stat.html', registration=registration, event=event, x_staff=x_staff, x_classroom=x_classroom, id_evt=id_evt)
 
-# Панель администратора (события) - статистика регистраций на событие, списки волонтеров зарегистрировавшихся на конкретное событие
+
+# Панель администратора (события)
+# - статистика регистраций на событие, списки волонтеров зарегистрировавшихся на конкретное событие
 @panel.route('/visit/<id_evt>')
 def visit(id_evt):
     # является ли пользователь администратором
@@ -426,7 +441,7 @@ def visit(id_evt):
     visited = curI.fetchall()
     count = len(visited)
     event = curII.fetchone()
-    # дописать тело. Показывает сколько человек зарегистрировалось на событие и вы водит поименный список с возможностью отмечать присутствие
+
     return render_template('visit.html', visited=visited, event=event, count=count, id_evt=id_evt)
 
 
@@ -441,18 +456,17 @@ def check():
     conn = sqlite3.connect("sql/volonteer.db")
     cur = conn.cursor()
 
-    event=request.form['event']
-    _form=request.form
+    event = request.form['event']
+    _form = request.form
     for key in _form:
         if _form[key] == 'on':
-            # Меняем нолик на единицу в таблице регистраций, устанавливая посещение волонтером с id = key мероприятия с id = event
+            # Меняем нолик на единицу в таблице регистраций,
+            # устанавливая посещение волонтером с id = key мероприятия с id = event
             cur.execute("UPDATE registration SET visit = 1, classroom='{2}' WHERE id_prsn = {0} AND id_evt={1}".format(key, event, _form.get('classroom_for_'+key)))
         conn.commit()
 
     conn.close()    
     return redirect(url_for('administrator.event'))
-
-
 
 
 # ------------------------------------- Раздел о факультетах -----------------------------------------------------------
@@ -464,16 +478,17 @@ def faculty():
     if session.get('id') != 'admin':
         return PAGE_ERROR_ENTER
 
-    conn=sqlite3.connect("sql/volonteer.db")
-    cur=conn.cursor()
+    conn = sqlite3.connect("sql/volonteer.db")
+    cur = conn.cursor()
     cur.execute('SELECT * FROM faculty ORDER BY full_name')
     faculty = cur.fetchall()
     conn.close()
 
     return render_template('faculty.html', faculty=faculty)
 
+
 # Добавления факультета
-@panel.route('/facultyadd', methods = ['GET', 'POST'])
+@panel.route('/facultyadd', methods=['GET', 'POST'])
 def facultyadd():
     # является ли пользователь администратором
     if session.get('id') != 'admin':
@@ -485,10 +500,9 @@ def facultyadd():
     phone = request.form.get('phone')
     email = request.form.get('email')
 
-
-    conn=sqlite3.connect("sql/volonteer.db")
+    conn = sqlite3.connect("sql/volonteer.db")
     # Проверка создаваемого факультета на уникальность
-    cur0=conn.cursor()
+    cur0 = conn.cursor()
     cur0.execute('SELECT full_name, short_name FROM faculty')
     listFaculty = cur0.fetchall()
     for i in listFaculty:
@@ -527,12 +541,13 @@ def facultyadd():
                         </script>
                         </body>
                         </html>'''
-    cur=conn.cursor()
+    cur = conn.cursor()
     cur.execute('INSERT INTO faculty (full_name, short_name, leader_name, phone, email) VALUES ("{0}", "{1}", "{2}", "{3}", "{4}")'.format(full_name, short_name, leader_name, phone, email))
     conn.commit()
     conn.close()
 
     return redirect(url_for('administrator.faculty'))
+
 
 # Удаление факультета
 @panel.route('/facultydel/<f_id>')
@@ -541,13 +556,14 @@ def facultydel(f_id):
     if session.get('id') != 'admin':
         return PAGE_ERROR_ENTER
 
-    conn=sqlite3.connect("sql/volonteer.db")
-    cur=conn.cursor()
+    conn = sqlite3.connect("sql/volonteer.db")
+    cur = conn.cursor()
     cur.execute('DELETE FROM faculty WHERE f_id="{}"'.format(f_id))
     conn.commit()
     conn.close()
 
     return redirect(url_for('administrator.faculty'))
+
 
 # Форма редактирования факультета
 @panel.route('/facultyedit/<f_id>')
@@ -562,10 +578,11 @@ def facultyedit(f_id):
     fac = cur.fetchone()
     conn.close()
 
-    return render_template('faculty_edit.html', fac = fac)
+    return render_template('faculty_edit.html', fac=fac)
+
 
 # Функция редактирования факультета
-@panel.route('/facultyeditfoo', methods = ['GET', 'POST'])
+@panel.route('/facultyeditfoo', methods=['GET', 'POST'])
 def facultyeditfoo():
     # является ли пользователь администратором
     if session.get('id') != 'admin':
@@ -577,16 +594,14 @@ def facultyeditfoo():
     phone = request.form.get('phone')
     email = request.form.get('email')
 
+    conn = sqlite3.connect("sql/volonteer.db")
 
-    conn=sqlite3.connect("sql/volonteer.db")
-
-    cur=conn.cursor()
+    cur = conn.cursor()
     cur.execute('UPDATE faculty SET full_name = "{0}", short_name = "{1}", leader_name = "{2}", phone = "{3}", email = "{4}" WHERE f_id = "{5}"'.format(full_name, short_name, leader_name, phone, email, f_id))
     conn.commit()
     conn.close()
 
     return redirect(url_for('administrator.faculty'))
-
 
 
 # --------------- Блок новостей -------------------------------------------------------------------------
@@ -606,8 +621,9 @@ def post():
 
     return render_template('posts.html', news=news)
 
+
 # Публикация новости
-@panel.route('/addpost', methods=['GET','POST'])
+@panel.route('/addpost', methods=['GET', 'POST'])
 def addpost():
     # является ли пользователь администратором
     if session.get('id') != 'admin':
@@ -617,12 +633,13 @@ def addpost():
     body = request.form.get('bodypost')
     type = request.form.get('type')    
 
-    conn=sqlite3.connect("sql/volonteer.db")
-    cur=conn.cursor()
-    cur.execute('INSERT INTO news (date, title, body, type) VALUES (?,?,?,?)',(date.today(), title, body, type))
+    conn = sqlite3.connect("sql/volonteer.db")
+    cur = conn.cursor()
+    cur.execute('INSERT INTO news (date, title, body, type) VALUES (?,?,?,?)', (date.today(), title, body, type))
     conn.commit()
     conn.close()
     return redirect(url_for('administrator.post'))
+
 
 # Редактирование новости интерфейс
 @panel.route('/postrecovery/<id_new>')
@@ -638,6 +655,7 @@ def postrecovery(id_new):
     conn.close()
     return render_template('post_recovery.html', new=new)
 
+
 # Редактирование новости обработка формы
 @panel.route('/postrecoveryfoo', methods=['GET','POST'])
 def postrecoveryfoo():
@@ -651,12 +669,13 @@ def postrecoveryfoo():
     body = request.form.get('bodypost')
     type = request.form.get('type')    
     
-    conn=sqlite3.connect("sql/volonteer.db")
-    cur=conn.cursor()
+    conn = sqlite3.connect("sql/volonteer.db")
+    cur = conn.cursor()
     cur.execute('UPDATE news SET date=?, title=?, body=?, type=? WHERE id = ?', (date, title, body, type, id))
     conn.commit()
     conn.close()
     return redirect(url_for('administrator.post'))
+
 
 # Удаление новости
 @panel.route('/delpost/<id_new>')
@@ -673,7 +692,7 @@ def delpost(id_new):
     return redirect(url_for('administrator.post'))
 
 
-# ----------------------------------------------------------- Отчеты -------------------------------------------------------------------------------
+# ---------------------------------------- Отчеты --------------------------------------------------------------
 
 # Выгружает всех зарегистрированных пользователей в виде excel файла
 @panel.route('/getdata', methods=['GET', 'POST'])
@@ -686,7 +705,7 @@ def getdata():
     cur = conn.cursor()
     _since = request.form.get('since')
     _to = request.form.get('to')
-    if(_since == None and _to == None):
+    if _since is None and _to is None:
         cur.execute('''SELECT ev.id_evt, ev.event, ev.activity, ev.date, ev.time_start,  ev.duration, ev.address, p.id_prsn, p.surname_prsn, p.name_prsn, p.patronymic_prsn, p.faculty, p.email, p.phone, p.birthday, p.sex, p.year_st, reg.visit, reg.role, reg.classroom
                    FROM registration AS reg 
                    JOIN person AS p ON reg.id_prsn = p.id_prsn
@@ -732,6 +751,7 @@ def getdata():
         conn.close()
     return send
 
+
 # Выгружает всех зарегистрированных пользователей
 @panel.route('/getallusers')
 def getallusers():
@@ -774,6 +794,7 @@ def getallusers():
         conn.close()
     return send
 
+
 # Выгружает события по заданным срокам
 @panel.route('/getsomeevents', methods=['GET', 'POST'])
 def getsomeevents():
@@ -813,7 +834,7 @@ def getsomeevents():
     try:
         send = send_file('someevents.xlsx', cache_timeout=0, attachment_filename='someevents.xlsx', as_attachment=True)
     except:
-        send='Ошибка создания файла!'
+        send = 'Ошибка создания файла!'
     finally:
         conn.close()
     return send
@@ -833,7 +854,8 @@ def scopereg():
     cur.execute('SELECT * FROM event JOIN (SELECT id_evt, role, COUNT(id_prsn) AS num FROM registration WHERE id_evt IN (SELECT id_evt FROM event WHERE date >= "{0}" AND date <= "{1}") GROUP BY id_evt, role) AS tab ON event.id_evt=tab.id_evt ORDER BY event.id_evt'.format(_since, _to))
     someevents = cur.fetchall()
   
-    return render_template("scope.html",someevents=someevents)
+    return render_template("scope.html", someevents=someevents)
+
 
 # Выгружает зарегистрированных пользователей по конкретному событию
 @panel.route('/getuserregistronevent/<id_evt>', methods=['GET', 'POST'])
@@ -872,10 +894,11 @@ def getuserregistronevent(id_evt):
     try:
         send = send_file('userregistronevent.xlsx', cache_timeout=0, attachment_filename='userregistronevent.xlsx', as_attachment=True)
     except:
-        send='Ошибка создания файла!'
+        send = 'Ошибка создания файла!'
     finally:
         conn.close()
     return send
+
 
 # Выгружает посетивших конкретное событие
 @panel.route('/getvisit/<id_evt>', methods=['GET', 'POST'])

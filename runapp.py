@@ -50,13 +50,18 @@ def about():
     conn = sqlite3.connect('sql/volonteer.db')
     cur = conn.cursor()
     content = cur.execute('SELECT body FROM pages WHERE place = "about"').fetchone()[0]
+    conn.close()
     return render_template('about.html', content=content)
 
 
 # Контакты
 @app.route('/contact')
 def contact():
-    return render_template('contact.html')
+    conn = sqlite3.connect('sql/volonteer.db')
+    cur = conn.cursor()
+    content = cur.execute('SELECT body FROM pages WHERE place = "contact"').fetchone()[0]
+    conn.close()
+    return render_template('contact.html', content=content)
 
 
 # Функция для проверки адресов в бд через js
@@ -334,7 +339,6 @@ def vern():
     return render_template('vern.html', message=message, code=code)
 
 
-
 # ------------- test
 
 # @app.route('/test')
@@ -352,7 +356,7 @@ def vern():
 #     # Если записи не были найдены возвращаем пользователя на главную страницу.
 #     return str(persons)
 
-
 # ----------------------- Конец скрипта ------------------------ #
+
 if __name__ == '__main__':
     app.run(debug=True)
