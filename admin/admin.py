@@ -256,7 +256,7 @@ def change_page():
     cur.execute('UPDATE pages SET theme = ?, body = ? WHERE place = ?', (theme, body, place))
     conn.commit()
     conn.close()
-    return redirect(url_for('administrator.post'))
+    return redirect(url_for('administrator.pages'))
 
 
 # ----------------------------- Раздел с событиями -----------------------------------------------

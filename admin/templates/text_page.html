@@ -5,7 +5,10 @@
 <div class="container p-3 border rounded-lg">
 
     <h2 class="m-2">Текст рассылок и страниц</h2>
-    <p class="row m-2 text-danger" >При редактировании шаблона не удалять ссылки, заключенные в фигурные скобки!</p>
+    <p class="row m-2 text-danger" >
+        При редактировании шаблона не удалять ссылки, заключенные в фигурные скобки! <br>
+        Текст страниц, поддерживает html, текст рассылок не поддерживает.
+    </p>
     {% for p in text %}
     <form action="{{url_for('administrator.change_page')}}" method="post">
 
