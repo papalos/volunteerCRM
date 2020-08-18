@@ -48,7 +48,7 @@ def send(destination, name_evt):
     conn = sqlite3.connect("sql/volonteer.db")
     cursor = conn.cursor()
     # По списку событий ищем сколько на них зарегистрированно
-    cursor.execute("SELECT theme, body FROM registration WHERE place = 'reserve_send'")
+    cursor.execute("SELECT theme, body FROM pages WHERE place = 'reserve_send'")
     text = cursor.fetchone()
     conn.close()
     msg = MIMEText(text[1].format(event=name_evt), 'plain', 'utf-8')

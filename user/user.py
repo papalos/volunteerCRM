@@ -101,7 +101,8 @@ def cabinet(action):
             ls = row[3].split('-')
             ls = int(''.join(ls))
             if ls > int(''.join(date.today().isoformat().split('-'))):
-                # Проверяем есть ли свободные места, role_dict содержит количество зарегистрированных на мероприятие по ролям
+                # Проверяем есть ли свободные места,
+                # role_dict содержит количество зарегистрированных на мероприятие по ролям
                 if row[10] > role_dict.get(row[0], {}).get('аудитория', 0) or row[8] > role_dict.get(row[0], {}).get('штаб', 0):
                     # Если есть даем возможность зарегистрироваться
                     style = 'style = "color:black;"'
@@ -110,7 +111,7 @@ def cabinet(action):
                     # Иначе проверяем есть ли этот волонтер в резерве
                     style = 'style = "color:red;"'
                     curIII = conn.cursor()
-                    curIII.execute("SELECT * FROM reserve WHERE id_prsn = {} LIMIT 1".format(session['id']))
+                    curIII.execute("SELECT * FROM reserve WHERE id_evt = {} AND id_prsn = {} LIMIT 1".format(row[0], session['id']))
                     if len(curIII.fetchall()) != 0:
                         # Если есть сообщаем ему об этом
                         reg = '<span>Вы в резерве</span>'

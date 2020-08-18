@@ -38,7 +38,7 @@ def real_time():
     conn = sqlite3.connect('sql/volonteer.db')
     cur = conn.cursor()
     events = cur.execute(
-        'SELECT event.id_evt, event, activity, date, staff_max, classroom_max, COUNT(event.id_evt) FROM event JOIN registration ON event.id_evt = registration.id_evt GROUP BY event.id_evt'
+        'SELECT event.id_evt, event, activity, date, staff_max, classroom_max, COUNT(event.id_evt) FROM event JOIN registration ON event.id_evt = registration.id_evt WHERE date > date("now") GROUP BY event.id_evt'
     ).fetchall()
     events = [(x[1], x[2], x[3], nulling(x[4]) + nulling(x[5]) - nulling(x[6])) for x in events]
     return render_template('real_time.html', events=events)
@@ -49,8 +49,9 @@ def real_time():
 def about():
     conn = sqlite3.connect('sql/volonteer.db')
     cur = conn.cursor()
-    content = cur.execute('SELECT body FROM pages WHERE place = "about"').fetchone()[0]
+    content = str(cur.execute('SELECT body FROM pages WHERE place = "about"').fetchone()[0])
     conn.close()
+    content = content.format(link_reg=url_for('person'))
     return render_template('about.html', content=content)
 
 
