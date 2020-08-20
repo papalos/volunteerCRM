@@ -95,7 +95,22 @@ def cabinet(action):
                 role_dict[x[0]] = {x[1]: 1}
 
         # формируем переменную контент из строк вышеуказанной выборки
-        content = '<p>Предстоящие события. <br> <span style="color:red">Красным цветом выделены события регистрация на которые завершена</span>, при желании вы можете добавиться в резерв, если место освободится, вы будете информированы об этом</p><table class="table table-striped"><col width="20%"><col width="20%"><col width="15%"><col width="10%"><col width="20%"><col width="15%"> <thead><th><a href="/us/cabinet/nextevt?srt=event">Событие</a></th><th><a href = "/us/cabinet/nextevt?srt=activity">Активность/Предмет</a></th><th><a href="/us/cabinet/nextevt">Дата</a></th><th>Время явки</th><th>Адрес</th><th></th></thead><tbody>'
+        content = '''
+            <p>События, доступные для регистрации <br> 
+            <span style="color:red">Красным цветом выделены события, регистрация на которые завершена</span>. </br>
+            При желании вы можете добавиться в резерв. Если место освободится, вы будете информированы об этом.</br>
+            После инфорирования об освободившихся местах вы автоматически удаляетесь из резерва!</p>
+            <table class="table table-striped">
+                <col width="20%"><col width="20%">
+                <col width="15%"><col width="10%">
+                <col width="20%"><col width="15%"> 
+                <thead>
+                    <th><a href="/us/cabinet/nextevt?srt=event">Событие</a></th>
+                    <th><a href = "/us/cabinet/nextevt?srt=activity">Активность/Предмет</a></th>
+                    <th><a href="/us/cabinet/nextevt">Дата</a></th>
+                    <th>Время явки</th>
+                    <th>Адрес</th><th></th>
+                </thead><tbody>'''
         # Из таблицы События выбираем события с id_evt на которые данный пользователь еще не регистрировался
         for row in cur:
             ls = row[3].split('-')
