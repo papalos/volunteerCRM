@@ -11,6 +11,7 @@
         <th>Активность/Предмет</th>
         <th>id пользователя</th>
         <th>e-mail</th>
+        <th></th>
         </thead>
         {%for r in res%}
         <tr>
@@ -19,7 +20,7 @@
             <td>{{r[2]}}</td>
             <td>{{r[3]}}</td>
             <td>{{r[4]}}</td>
-
+            <td><a href="{{url_for('administrator.reservedel', evt=r[5], prs=r[3])}}">Удалить</a></td>
         </tr>
         {%endfor%}
     </table>

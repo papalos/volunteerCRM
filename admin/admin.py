@@ -221,9 +221,23 @@ def reserve():
 
     conn = sqlite3.connect("sql/volonteer.db")
     cur = conn.cursor()
-    res = cur.execute("SELECT date, event, activity, id_prsn, email FROM reserve JOIN event ON reserve.id_evt = event.id_evt").fetchall()
+    res = cur.execute("SELECT date, event, activity, id_prsn, email, reserve.id_evt FROM reserve JOIN event ON reserve.id_evt = event.id_evt").fetchall()
     conn.close()
     return render_template('/reserve.html', res=res)
+
+# Удаление из таблицы резервистов
+@panel.route('/reservedel/<evt>/<prs>')
+def reservedel(evt, prs):
+    # является ли пользователь администратором
+    if session.get('id') != 'admin':
+        return PAGE_ERROR_ENTER
+
+    conn = sqlite3.connect("sql/volonteer.db")
+    cur = conn.cursor()
+    cur.execute("DELETE FROM reserve WHERE id_evt=? and id_prsn=?", (evt, prs))
+    conn.commit()
+    conn.close()
+    return redirect(url_for('administrator.reserve'))
 
 
 # Просмотр текста страниц
@@ -458,11 +472,17 @@ def check():
 
     event = request.form['event']
     _form = request.form
-    for key in _form:
-        if _form[key] == 'on':
+    print(_form)
+    ls = _form.getlist('list')
+    print(ls)
+
+    for key in ls:
+        if _form.get(key) == 'on':
             # Меняем нолик на единицу в таблице регистраций,
             # устанавливая посещение волонтером с id = key мероприятия с id = event
             cur.execute("UPDATE registration SET visit = 1, classroom='{2}' WHERE id_prsn = {0} AND id_evt={1}".format(key, event, _form.get('classroom_for_'+key)))
+        else:
+            cur.execute("UPDATE registration SET visit = 0, classroom='{2}' WHERE id_prsn = {0} AND id_evt={1}".format(key, event, _form.get('classroom_for_' + key)))
         conn.commit()
 
     conn.close()    

@@ -332,7 +332,7 @@ def vern():
             fio = cur.execute('SELECT surname_prsn, name_prsn, patronymic_prsn  FROM person WHERE id_prsn = ?', (id_prsn,)).fetchone()
             evt = cur.execute('SELECT activity, date  FROM event WHERE id_evt = ?', (id_evt,)).fetchone()
             fio = ' '.join(fio)
-            message = '{} {} принял участие в мероприятии "{}" в качестве волонтера'.format(fio, evt[1], evt[0])
+            message = '{} {} принял(-а) участие в мероприятии «{}» в качестве волонтера'.format(fio, evt[1], evt[0])
         else:
             message = 'Данный код не действителен'
         # Пишем здесь __________________________________________

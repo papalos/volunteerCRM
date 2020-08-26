@@ -38,6 +38,7 @@
                 <td>{{r[8]}}</td>
                 <td><input type="checkbox" name="{{r[0]}}" checked="checked" /></td>
                 <td><input type="text" size="10" name="classroom_for_{{r[0]}}" value="{{r[10]}}" /></td>
+                <input type="hidden" name="list" value="{{r[0]}}">
             </tr>
             {% else %}
             <tr>
@@ -50,8 +51,9 @@
                 <td>{{r[6]}}</td>
                 <td>{{r[7]}}</td>
                 <td>{{r[8]}}</td>
-                <td><input type="checkbox" name="{{r[0]}}" /></td>
+                <td><input type="checkbox" name="{{r[0]}}"/></td>
                 <td><input type="text" size="10" name="classroom_for_{{r[0]}}" /></td>
+                <input type="hidden" name="list" value="{{r[0]}}">
             </tr>
             {% endif %}
             {%endfor%}

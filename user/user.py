@@ -134,7 +134,7 @@ def cabinet(action):
                         # Иначе проверяем есть ли свободные места в резерве (ограничим их 10-ю на каждое событие)
                         curIV = conn.cursor()
                         count = curIV.execute("SELECT COUNT(id_evt) FROM reserve WHERE id_evt = {}".format(row[0])).fetchone()[0]
-                        if count > 10:
+                        if count > 9:
                             # Если нет сообщаем ему об этом
                             reg = '<span>Резерв набран</span>'
                         else:
@@ -231,7 +231,11 @@ def cancel_registration(id_evt):
 @cabin.route('/gen_pdf/<code>/<fio>')
 def gen_pdf(code, fio):
     id_evt, day, year, id_user, month = code.split("-")
-    evt_date = '{}.{}.{}'.format(day, month, int(year)+2010)
+    evt_date = '{:02d}.{:02d}.{}'.format(int(day), int(month), int(year)+2010)
     fio = ' '.join(fio.replace('_-', ' ').split('_'))
+    conn = sqlite3.connect("sql/volonteer.db")
+    cur = conn.cursor()
+    # Получаем ФИО пользователя по id записанного в сессию
+    activity_name = cur.execute('SELECT activity FROM event WHERE id_evt=?', (id_evt,)).fetchone()[0]
 
-    return render_template('generate_pdf.html', fio=fio, evt_date=evt_date, code=code)
+    return render_template('generate_pdf.html', fio=fio, evt_date=evt_date, code=code, activity_name=activity_name)
